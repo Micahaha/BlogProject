@@ -1,0 +1,20 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+@model List<Blog>
+
+<div class="col-md">
+    <h1 class="display-1 text-center fw-bold">CAHMI'S BLOG</h1>
+    <p class="text-center fst-italic font-monospace">A Self Improvement Blog since 2023</p> 
+</div>
+
+<div class="cold-md">
+    @foreach (var blog in Model)
+    {
+        <h1>@blog.Title</h1>
+        <p>@blog.Author.FirstName @blog.Author.LastName</p>
+
+    }
+</div>
+
