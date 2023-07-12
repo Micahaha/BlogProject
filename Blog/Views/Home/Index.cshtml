@@ -1,4 +1,5 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Identity
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -9,12 +10,58 @@
     <p class="text-center fst-italic font-monospace">A Self Improvement Blog since 2023</p> 
 </div>
 
-<div class="cold-md">
     @foreach (var blog in Model)
     {
-        <h1>@blog.Title</h1>
-        <p>@blog.Author.FirstName @blog.Author.LastName</p>
+         <div class="container p-3">
+        <div class="row justify-content-center">
+            <div class="col-8 border border-3 border-light rounded-3">
+                <article class="blog-post rounded">
+                    <h5 class="fw-bold">@blog.Tag.Name</h5> 
+                    <h1 class="fw-bold blog-post-title display-2 lh-1">@blog.Title</h1>
+                    <h2 class="fw-lighter fst-italic">@blog.Header</h2> 
+                    <p class=" font-monospace blog-post-meta">@blog.CreatedDate by @blog.Author.User</p>
+                    <p>@blog.Description</p>
+                    <hr>
+                </article>
+
+               
+
+                @if (blog.Comments.Count > 0)
+                {
+                     <h3 class="p-3">Comments</h3> 
+                        @foreach(var comment in blog.Comments)
+                        {    
+                            <div class="border-start border-3 p-3">
+                            <h5 class="text-primary fw-lighter ">@comment.User <text class="fs-6 text-secondary">@comment.CreatedDateTime</text> </h5>
+                            <p class="fw-light card-text">@comment.Text</p>
+                            </div>
+                       
+                        } 
+
+                }
+
+                @if (User.Identity.IsAuthenticated)
+                {
+                   <div class="col p-3">
+                       <div class="col">     
+                            <form asp-controller="Home" asp-action="AddComment" method="post">
+                                <input type="hidden" name="blogId" value="@blog.BlogId" />
+                                <input type="text"  name="text" class="form-control" placeholder="Posting as @User.Identity.Name">
+                                <div class="col p-3">
+                                    <button class="btn btn-primary" type="submit">Send</button>
+                                </div>
+                           </form>
+                        </div>
+                        
+                   </div>
+           
+                }
+              
+
+            </div>
+        </div>
+    </div>
 
     }
-</div>
+
 

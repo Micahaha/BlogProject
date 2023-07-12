@@ -4,16 +4,18 @@ using BlogProject.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace BlogProject.Data.Migrations
+namespace BlogProject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230711102546_datetimer")]
+    partial class datetimer
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,11 +32,7 @@ namespace BlogProject.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AuthorId"), 1L, 1);
 
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
+                    b.Property<string>("User")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -43,7 +41,7 @@ namespace BlogProject.Data.Migrations
                     b.ToTable("Authors");
                 });
 
-            modelBuilder.Entity("BlogProject.Models.BlogProject", b =>
+            modelBuilder.Entity("BlogProject.Models.Blog", b =>
                 {
                     b.Property<int>("BlogId")
                         .ValueGeneratedOnAdd()
@@ -61,6 +59,10 @@ namespace BlogProject.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Header")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("TagId")
                         .HasColumnType("int");
 
@@ -75,6 +77,41 @@ namespace BlogProject.Data.Migrations
                     b.HasIndex("TagId");
 
                     b.ToTable("Blogs");
+                });
+
+            modelBuilder.Entity("BlogProject.Models.Comment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("BlogId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Dislikes")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Likes")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("User")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BlogId");
+
+                    b.ToTable("Comment");
                 });
 
             modelBuilder.Entity("BlogProject.Models.Tag", b =>
@@ -296,7 +333,7 @@ namespace BlogProject.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("BlogProject.Models.BlogProject", b =>
+            modelBuilder.Entity("BlogProject.Models.Blog", b =>
                 {
                     b.HasOne("BlogProject.Models.Author", "Author")
                         .WithMany()
@@ -313,6 +350,13 @@ namespace BlogProject.Data.Migrations
                     b.Navigation("Author");
 
                     b.Navigation("Tag");
+                });
+
+            modelBuilder.Entity("BlogProject.Models.Comment", b =>
+                {
+                    b.HasOne("BlogProject.Models.Blog", null)
+                        .WithMany("Comments")
+                        .HasForeignKey("BlogId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -364,6 +408,11 @@ namespace BlogProject.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("BlogProject.Models.Blog", b =>
+                {
+                    b.Navigation("Comments");
                 });
 #pragma warning restore 612, 618
         }

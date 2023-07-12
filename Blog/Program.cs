@@ -1,7 +1,7 @@
 using BlogProject.Data;
-using BlogProject.Interfaces;
-using BlogProject.Repositories;
+
 using BlogProject.Services;
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,13 +16,6 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<BlogService>();
-
-#region Repositories 
-
-builder.Services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-builder.Services.AddTransient<IAuthorRepository, AuthorRepository>();
-builder.Services.AddTransient<ITagRepository, TagRepository>();
-
 
 
 var app = builder.Build();

@@ -1,29 +1,72 @@
 ﻿using BlogProject.Data;
 using BlogProject.Models;
 using BlogProject.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Diagnostics;
 
 namespace BlogProject.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-        private readonly ApplicationDbContext _context; 
-        private readonly BlogService _blogService;
-
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, BlogService blogService)
+        private readonly BlogService blogService;
+        private readonly ApplicationDbContext context;
+        public HomeController(BlogService blogService, ApplicationDbContext context)
         {
-            _logger = logger;
-            _context = context;
-            _blogService = blogService;
+            this.blogService = blogService;
+            this.context = context;
         }
 
         public IActionResult Index()
         {
-            List<Models.Blog> blogs = _blogService.GetAllBlogs();
+            var blogs = blogService.GetAllBlogs();
             return View(blogs);
         }
+
+        [HttpPost]
+        public IActionResult AddComment(int blogId, string text) 
+        {
+            if (ModelState.IsValid) 
+            {
+                blogService.AddComment(blogId, text, User.Identity.Name);
+            }
+            return RedirectToAction("Index");
+        }
+
+    
+
+        [Authorize]
+        public IActionResult Post()
+        {
+            List<SelectListItem> options = new List<SelectListItem>()
+            {
+                new SelectListItem {Value = "Fun", Text = "Fun" },
+                new SelectListItem {Value = "Coding", Text = "Coding" },
+                new SelectListItem {Value = "Miscellaneous", Text = "Miscellaneous" },
+                new SelectListItem {Value = "Artwork", Text = "Artwork" },
+            };
+
+            ViewData["Options"] = options;
+
+            return View();
+        }
+
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult Post(Blog blog) 
+        { 
+            blog.Comments = new List<Comment>();  
+            blog.Author = new Author { User = User.Identity.Name };
+
+           
+            context.Add(blog);
+            context.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+       
 
 
         public IActionResult Privacy()
