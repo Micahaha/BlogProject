@@ -34,7 +34,30 @@
                             <div class="border-start border-3 p-3">
                             <h5 class="text-primary fw-lighter ">@comment.User <text class="fs-6 text-secondary">@comment.CreatedDateTime</text> </h5>
                             <p class="fw-light card-text">@comment.Text</p>
-                            </div>
+                            <p><i class="bi bi-hand-thumbs-up"></i> @comment.Likes  <i class="bi bi-hand-thumbs-down"></i> @comment.Dislikes</p>
+                           
+                             <div class="d-flex">
+                            <form asp-controller="Home" asp-action="Like" method="post">
+                                <input type="hidden" name="blogId" value="@blog.BlogId" />
+                                <input type="hidden" name="commentId" value="@comment.Id" />
+                                <div class="col p-3">
+                                    <button class="btn btn-primary" type="submit">
+                                    <i class="bi bi-hand-thumbs-up "></i>Like 
+                                    </button>
+                                </div>
+                           </form>
+                           <form asp-controller="Home" asp-action="Dislike" method="post">
+                                <input type="hidden" name="blogId" value="@blog.BlogId" />
+                                <input type="hidden" name="commentId" value="@comment.Id" />
+                                <div class="col p-3">
+                                    <button class="btn btn-danger" type="submit">
+                                    <i class="bi bi-hand-thumbs-down"></i>Dislike 
+                                    </button>
+                                </div>
+                           </form>
+                           </div>
+                            
+                           </div>
                        
                         } 
 

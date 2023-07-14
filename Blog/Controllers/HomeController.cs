@@ -34,7 +34,19 @@ namespace BlogProject.Controllers
             return RedirectToAction("Index");
         }
 
-    
+        public IActionResult Like(int blogId, int commentId) 
+        {
+            blogService.AddLike(blogId, commentId);
+            context.SaveChanges();  
+            return  RedirectToAction("Index");
+        }
+        public IActionResult Dislike(int blogId, int commentId)
+        {
+            blogService.AddDislike(blogId, commentId);
+            context.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
 
         [Authorize]
         public IActionResult Post()
