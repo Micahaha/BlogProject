@@ -8,6 +8,5 @@ A blog application created in ASP.NET Core 6 with like, dislike and comment capa
 [MIT](https://choosealicense.com/licenses/mit/)
 
 ## Screenshot
-![alt text]([https://imgur.com/e84lCxR.png)
-
+![alt text](https://i.imgur.com/e84lCxR.png)
 
