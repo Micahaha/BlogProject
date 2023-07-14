@@ -12,6 +12,6 @@ A blog application created in ASP.NET Core 6 with like, dislike and comment capa
 
 ## Screenshots
 
-![img]https://i.imgur.com/e84lCxR.png[/img]
+!https://i.imgur.com/e84lCxR.png
 
 
