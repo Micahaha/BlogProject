@@ -37,7 +37,17 @@ namespace BlogProject.Controllers
         public IActionResult Like(int blogId, int commentId) 
         {
             blogService.AddLike(blogId, commentId);
-            context.SaveChanges();  
+            var user = blogService.getUserAsync();
+
+            var current_blog = context.Blogs.Where(context => context.BlogId == blogId).FirstOrDefault();
+            var current_comment = current_blog.Comments.Where(comment => comment.Id == commentId).FirstOrDefault();
+
+            if (user.LikedComments.Contains(current_comment)) 
+            {
+                
+            }
+
+            context.SaveChanges();
             return  RedirectToAction("Index");
         }
         public IActionResult Dislike(int blogId, int commentId)

@@ -50,10 +50,16 @@ namespace BlogProject.Services
         {
             var current_blog = context.Blogs.Where(blog => blog.BlogId == blogId).Include(c => c.Comments).SingleOrDefault();
             var current_comment = current_blog.Comments.Where(comment => comment.Id == CommentId).SingleOrDefault();
+            var user = getUserAsync();
+
+            if (user != null) 
+            {
+                user.LikedComments.Add(current_comment);
+            }
+
             current_comment.Likes++;
 
-            var user = getUserAsync();
-            user.LikedComments.Add(current_comment);
+           
 
 
         }
