@@ -37,14 +37,24 @@
                             <p><i class="bi bi-hand-thumbs-up"></i> @comment.Likes  <i class="bi bi-hand-thumbs-down"></i> @comment.Dislikes</p>
                            
                              <div class="d-flex">
-                            <form asp-controller="Home" asp-action="Like" method="post">
+
+                                @if (ViewBag.isLiked)
+                                {
+                                <form asp-controller="Home" asp-action="Like" method="post">
                                 <input type="hidden" name="blogId" value="@blog.BlogId" />
                                 <input type="hidden" name="commentId" value="@comment.Id" />
                                 <div class="col p-3">
-                                    <button class="btn btn-primary" type="submit">
+                                    <button class="btn btn-primary" type="submit" disabled>
                                     <i class="bi bi-hand-thumbs-up "></i>Like 
                                     </button>
                                 </div>
+                                } 
+                                else
+                                {
+
+                                
+                                }
+                          
                            </form>
                            <form asp-controller="Home" asp-action="Dislike" method="post">
                                 <input type="hidden" name="blogId" value="@blog.BlogId" />

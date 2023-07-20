@@ -42,9 +42,14 @@ namespace BlogProject.Controllers
             var current_blog = context.Blogs.Where(context => context.BlogId == blogId).FirstOrDefault();
             var current_comment = current_blog.Comments.Where(comment => comment.Id == commentId).FirstOrDefault();
 
-            if (user.LikedComments.Contains(current_comment)) 
+            if (user.LikedComments.Contains(current_comment))
             {
-                
+                ViewBag.isLiked = true;
+            }
+
+            else 
+            {
+                ViewBag.Liked = false;
             }
 
             context.SaveChanges();
