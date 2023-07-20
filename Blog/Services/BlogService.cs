@@ -48,26 +48,58 @@ namespace BlogProject.Services
 
         public void AddLike(int blogId, int CommentId) 
         {
+            var user = getUserAsync();
             var current_blog = context.Blogs.Where(blog => blog.BlogId == blogId).Include(c => c.Comments).SingleOrDefault();
             var current_comment = current_blog.Comments.Where(comment => comment.Id == CommentId).SingleOrDefault();
-            var user = getUserAsync();
-
             if (user != null) 
             {
-                user.LikedComments.Add(current_comment);
+                if (!(user.LikedComments.Contains(current_comment)))
+                {
+
+                    {
+                        user.LikedComments.Add(current_comment);
+
+                        if (user.DislikedComments.Contains(current_comment))
+                        {
+                            user.DislikedComments.Remove(current_comment);
+                            current_comment.Dislikes--;
+                        }
+
+                        current_comment.Likes++;
+                    }
+                }
+                else 
+                {
+                    return;
+                }
             }
-
-            current_comment.Likes++;
-
-           
-
 
         }
         public void AddDislike(int blogId, int CommentId)
         {
             var current_blog = context.Blogs.Where(blog => blog.BlogId == blogId).Include(c => c.Comments).SingleOrDefault();
             var current_comment = current_blog.Comments.Where(comment => comment.Id == CommentId).SingleOrDefault();
-            current_comment.Dislikes++;
+            var user = getUserAsync();
+
+            if (!(user.DislikedComments.Contains(current_comment)))
+            {
+                if (user != null)
+                {
+                    user.DislikedComments.Add(current_comment);
+                    if (user.LikedComments.Contains(current_comment))
+                    {
+                        user.LikedComments.Remove(current_comment);
+                        current_comment.Likes--;
+                    }
+
+                    current_comment.Dislikes++;
+                }
+            }
+            else 
+            {
+                return;
+            }
+
         }
 
 

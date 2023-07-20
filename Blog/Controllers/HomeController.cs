@@ -34,31 +34,27 @@ namespace BlogProject.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize]
         public IActionResult Like(int blogId, int commentId) 
         {
-            blogService.AddLike(blogId, commentId);
-            var user = blogService.getUserAsync();
-
-            var current_blog = context.Blogs.Where(context => context.BlogId == blogId).FirstOrDefault();
-            var current_comment = current_blog.Comments.Where(comment => comment.Id == commentId).FirstOrDefault();
-
-            if (user.LikedComments.Contains(current_comment))
+            if (User.Identity.IsAuthenticated) 
             {
-                ViewBag.isLiked = true;
+                blogService.AddLike(blogId, commentId);
+                context.SaveChanges();
             }
+            return RedirectToAction("Index");
 
-            else 
-            {
-                ViewBag.Liked = false;
-            }
 
-            context.SaveChanges();
-            return  RedirectToAction("Index");
         }
+        [Authorize]
         public IActionResult Dislike(int blogId, int commentId)
         {
-            blogService.AddDislike(blogId, commentId);
-            context.SaveChanges();
+            if (User.Identity.IsAuthenticated)
+            {
+                blogService.AddDislike(blogId, commentId);
+                context.SaveChanges();
+            }
+      
             return RedirectToAction("Index");
         }
 
