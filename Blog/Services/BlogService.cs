@@ -28,16 +28,17 @@ namespace BlogProject.Services
         }
 
 
-        public ApplicationUser getUserAsync() 
+        public async Task<ApplicationUser> getUserAsync()
         {
             var userId = userManager.GetUserId(httpContextAccessor.HttpContext.User);
-            var user = userManager.Users
+            var user = await userManager.Users
                 .Include(u => u.LikedComments)
                 .Include(d => d.DislikedComments)
-                .FirstOrDefault(u => u.Id == userId);
+                .FirstOrDefaultAsync(u => u.Id == userId);
 
             return user;
         }
+
         public void AddComment(int blogId, string text, string username) 
         {
             var comment = new Comment { Likes = 0, Dislikes = 0, Text = text, User = username};
@@ -46,60 +47,76 @@ namespace BlogProject.Services
             context.SaveChanges();
         }
 
-        public void AddLike(int blogId, int CommentId) 
+        public async Task AddLike(int blogId, int commentId)
         {
-            var user = getUserAsync();
-            var current_blog = context.Blogs.Where(blog => blog.BlogId == blogId).Include(c => c.Comments).SingleOrDefault();
-            var current_comment = current_blog.Comments.Where(comment => comment.Id == CommentId).SingleOrDefault();
-            if (user != null) 
-            {
-                if (!(user.LikedComments.Contains(current_comment)))
-                {
-
-                    {
-                        user.LikedComments.Add(current_comment);
-
-                        if (user.DislikedComments.Contains(current_comment))
-                        {
-                            user.DislikedComments.Remove(current_comment);
-                            current_comment.Dislikes--;
-                        }
-
-                        current_comment.Likes++;
-                    }
-                }
-                else 
-                {
-                    return;
-                }
-            }
-
-        }
-        public void AddDislike(int blogId, int CommentId)
-        {
-            var current_blog = context.Blogs.Where(blog => blog.BlogId == blogId).Include(c => c.Comments).SingleOrDefault();
-            var current_comment = current_blog.Comments.Where(comment => comment.Id == CommentId).SingleOrDefault();
-            var user = getUserAsync();
-
-            if (!(user.DislikedComments.Contains(current_comment)))
-            {
-                if (user != null)
-                {
-                    user.DislikedComments.Add(current_comment);
-                    if (user.LikedComments.Contains(current_comment))
-                    {
-                        user.LikedComments.Remove(current_comment);
-                        current_comment.Likes--;
-                    }
-
-                    current_comment.Dislikes++;
-                }
-            }
-            else 
-            {
+            var user = await getUserAsync();
+            if (user == null)
                 return;
-            }
 
+
+            var current_blog = await context.Blogs
+                .Where(blog => blog.BlogId == blogId)
+                .Include(c => c.Comments)
+                .SingleOrDefaultAsync();
+
+            if (current_blog == null)
+                return;
+
+            var current_comment = current_blog.Comments.FirstOrDefault(comment => comment.Id == commentId);
+
+            if (current_comment == null)
+                return;
+
+            if (!user.LikedComments.Contains(current_comment))
+            {
+                user.LikedComments.Add(current_comment);
+
+                if (user.DislikedComments.Contains(current_comment))
+                {
+                    user.DislikedComments.Remove(current_comment);
+
+                    if (current_comment.Dislikes > 0)
+                        current_comment.Dislikes--;
+                }
+
+                current_comment.Likes++;
+            }
+        }
+
+        public async Task AddDislike(int blogId, int commentId)
+        {
+            var user = await getUserAsync();
+
+            if (user == null)
+                return;
+
+            var current_blog = await context.Blogs
+                .Where(blog => blog.BlogId == blogId)
+                .Include(c => c.Comments)
+                .SingleOrDefaultAsync();
+
+            if (current_blog == null)
+                return;
+
+            var current_comment = current_blog.Comments.FirstOrDefault(comment => comment.Id == commentId);
+
+            if (current_comment == null)
+                return;
+
+            if (!user.DislikedComments.Contains(current_comment))
+            {
+                user.DislikedComments.Add(current_comment);
+
+                if (user.LikedComments.Contains(current_comment))
+                {
+                    user.LikedComments.Remove(current_comment);
+
+                    if (current_comment.Likes > 0)
+                        current_comment.Likes--;
+                }
+
+                current_comment.Dislikes++;
+            }
         }
 
 

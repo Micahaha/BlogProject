@@ -35,29 +35,36 @@ namespace BlogProject.Controllers
         }
 
         [Authorize]
-        public IActionResult Like(int blogId, int commentId) 
-        {
-            if (User.Identity.IsAuthenticated) 
-            {
-                blogService.AddLike(blogId, commentId);
-                context.SaveChanges();
-            }
-            return RedirectToAction("Index");
-
-
-        }
-        [Authorize]
-        public IActionResult Dislike(int blogId, int commentId)
+        [HttpPost]
+        public async Task<IActionResult> Like(int blogId, int commentId)
         {
             if (User.Identity.IsAuthenticated)
             {
-                blogService.AddDislike(blogId, commentId);
-                context.SaveChanges();
+                await blogService.AddLike(blogId, commentId);
+                await context.SaveChangesAsync();
+                return RedirectToAction("Index");
+
             }
-      
-            return RedirectToAction("Index");
+            else
+            {
+                return View("Index");
+            }
         }
 
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> Dislike(int blogId, int commentId)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                await blogService.AddDislike(blogId, commentId);
+                await context.SaveChangesAsync();
+                return RedirectToAction("Index");
+
+            }
+
+            return RedirectToAction("Index");
+        }
 
         [Authorize]
         public IActionResult Post()
