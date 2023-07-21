@@ -28,7 +28,7 @@
                            
                              <div class="d-flex">
                             <form asp-controller="Home" asp-action="Like" method="post">
-                                <input type="hidden" name="ModelId" value="@Model.BlogId" />
+                                <input type="hidden" name="blogId" value="@Model.BlogId" />
                                 <input type="hidden" name="commentId" value="@comment.Id" />
                                 <div class="col p-3">
                                     <button class="btn btn-primary" type="submit">

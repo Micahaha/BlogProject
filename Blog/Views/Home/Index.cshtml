@@ -17,66 +17,12 @@
             <div class="col-8 border border-3 border-light rounded-3">
                 <article class="blog-post rounded">
                     <h5 class="fw-bold">@blog.Tag.Name</h5> 
-                    <h1 class="fw-bold blog-post-title display-2 lh-1">@blog.Title</h1>
+                    <h1 class="fw-bold blog-post-title display-2 lh-1"><a style="color: inherit; text-decoration: none;" asp-controller="Home" asp-action="Blog" asp-route-id="@blog.BlogId">@blog.Title</a></h1>
                     <h2 class="fw-lighter fst-italic">@blog.Header</h2> 
                     <p class=" font-monospace blog-post-meta">@blog.CreatedDate by @blog.Author.User</p>
                     <p>@blog.Description</p>
                     <hr>
-                </article>
-
-               
-
-                @if (blog.Comments.Count > 0)
-                {
-                     <h3 class="p-3">Comments</h3> 
-                        @foreach(var comment in blog.Comments)
-                        {    
-                            <div class="border-start border-3 p-3">
-                            <h5 class="text-primary fw-lighter ">@comment.User <text class="fs-6 text-secondary">@comment.CreatedDateTime</text> </h5>
-                            <p class="fw-light card-text">@comment.Text</p>
-                            <p><i class="bi bi-hand-thumbs-up"></i> @comment.Likes  <i class="bi bi-hand-thumbs-down"></i> @comment.Dislikes</p>
-                           
-                             <div class="d-flex">
-                            <form asp-controller="Home" asp-action="Like" method="post">
-                                <input type="hidden" name="blogId" value="@blog.BlogId" />
-                                <input type="hidden" name="commentId" value="@comment.Id" />
-                                <div class="col p-3">
-                                    <button class="btn btn-primary" type="submit">
-                                    <i class="bi bi-hand-thumbs-up "></i>Like 
-                                    </button>
-                                </div>
-                           </form>
-                           <form asp-controller="Home" asp-action="Dislike" method="post">
-                                <input type="hidden" name="blogId" value="@blog.BlogId" />
-                                <input type="hidden" name="commentId" value="@comment.Id" />
-                                <div class="col p-3">
-                                    <button class="btn btn-danger" type="submit">
-                                    <i class="bi bi-hand-thumbs-down"></i>Dislike 
-                                    </button>
-                                </div>
-                           </form>
-                           </div>
-                            
-                           </div>
-                       
-                        } 
-
-                }
-
-                @if (User.Identity.IsAuthenticated)
-                {
-                   <div class="col p-3">
-                       <div class="col">     
-                            <form asp-controller="Home" asp-action="AddComment" method="post">
-                                <input type="hidden" name="blogId" value="@blog.BlogId" />
-                                <input type="text"  name="text" class="form-control" placeholder="Posting as @User.Identity.Name">
-                                <div class="col p-3">
-                                    <button class="btn btn-primary" type="submit">Send</button>
-                                </div>
-                           </form>
-                        </div>  
-                   </div>
-                }
+                </article>  
             </div>
         </div>
     </div>

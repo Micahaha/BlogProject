@@ -4,6 +4,7 @@ using BlogProject.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace BlogProject.Controllers
@@ -42,7 +43,7 @@ namespace BlogProject.Controllers
             {
                 await blogService.AddLike(blogId, commentId);
                 await context.SaveChangesAsync();
-                return RedirectToAction("Index");
+                return RedirectToAction(nameof(Blog));
 
             }
             else
@@ -87,18 +88,21 @@ namespace BlogProject.Controllers
         [Authorize]
         public IActionResult Post(Blog blog) 
         { 
-            blog.Comments = new List<Comment>();  
+            blog.Comments = new List<Comment>();
             blog.Author = new Author { User = User.Identity.Name };
-
            
             context.Add(blog);
             context.SaveChanges();
 
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
+        }
+
+        public IActionResult Blog(int id) 
+        {
+           var blog = blogService.GetBlog(id);
+            return View(blog);
         }
        
-
-
         public IActionResult Privacy()
         {
             return View();

@@ -27,6 +27,23 @@ namespace BlogProject.Services
                 .ToList();   
         }
 
+        public Blog GetBlog(int id) 
+        {
+            var blog = context.Blogs
+                .Where(blog => blog.BlogId == id)
+                .Include(c => c.Comments)
+                .Include(t => t.Tag)
+                .Include(a => a.Author)
+                .FirstOrDefault();
+
+            if (blog != null) 
+            {
+                return blog;
+            }
+
+            return null;
+        }
+
 
         public async Task<ApplicationUser> getUserAsync()
         {
