@@ -43,7 +43,7 @@ namespace BlogProject.Controllers
             {
                 await blogService.AddLike(blogId, commentId);
                 await context.SaveChangesAsync();
-                return RedirectToAction(nameof(Blog));
+                return RedirectToAction(nameof(Blog), new { id = blogId });
 
             }
             else
@@ -60,8 +60,7 @@ namespace BlogProject.Controllers
             {
                 await blogService.AddDislike(blogId, commentId);
                 await context.SaveChangesAsync();
-                return RedirectToAction("Index");
-
+                return RedirectToAction(nameof(Blog), new { id = blogId });
             }
 
             return RedirectToAction("Index");
