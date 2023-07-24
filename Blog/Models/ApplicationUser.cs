@@ -6,5 +6,6 @@ namespace BlogProject.Models
     {
         public List<Comment> LikedComments { get; set; }
         public List<Comment> DislikedComments { get; set;  }
+        public string Username { get; set; }
     }
 }

@@ -4,7 +4,6 @@ using BlogProject.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace BlogProject.Controllers
@@ -43,13 +42,20 @@ namespace BlogProject.Controllers
             {
                 await blogService.AddLike(blogId, commentId);
                 await context.SaveChangesAsync();
-                return RedirectToAction(nameof(Blog), new { id = blogId });
 
             }
-            else
-            {
-                return View("Index");
-            }
+
+            return RedirectToAction(nameof(Blog), new { id = blogId });
+        }
+
+        public IActionResult Like() 
+        {
+            return RedirectToAction(nameof(Index));
+        }
+
+        public IActionResult Dislike() 
+        {
+            return RedirectToAction(nameof(Index));
         }
 
         [Authorize]
@@ -63,7 +69,7 @@ namespace BlogProject.Controllers
                 return RedirectToAction(nameof(Blog), new { id = blogId });
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Blog), new { id = blogId });
         }
 
         [Authorize]

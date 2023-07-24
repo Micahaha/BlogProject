@@ -15,6 +15,11 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<BlogService>();
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Creator", policy => policy.RequireClaim("CreatorId"));
+});
+
 
 builder.Services.AddSession(options =>
 {
