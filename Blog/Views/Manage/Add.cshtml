@@ -1,0 +1,55 @@
+﻿@model IEnumerable<ApplicationUser>
+
+
+@{
+    ViewBag.Title = "All Users";
+}
+
+<h1>All Roles</h1>
+
+@if (Model.Any())
+{
+    foreach (var user in Model) 
+    {
+    <form asp-action="Add" asp-controller="Manage" asp-route-id="@user.Id" method="post" class="mt-3">
+        <div class="card mb-3">
+            <div class="card-header">
+                User : @user.UserName
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">@user.Email</h5>
+            </div>
+            
+                <div class="card-footer">
+                <button class="btn btn-primary" type="submit">Add to Admin Role</button>
+                </div
+        </div>
+    </form>
+       <div id="toastContainer"></div>
+
+    <script>
+    // Use AJAX to check if there's a toast message in TempData and display it
+    // This code assumes you're using jQuery for simplicity, but you can use other libraries or plain JavaScript as well.
+    $(document).ready(function () {
+        // Check if there's a toast message in TempData
+        var toastMessage = '@(TempData["ToastMessage"] ?? "")';
+        
+        if (toastMessage) {
+            // Display the toast message
+            var toastContainer = $('#toastContainer');
+            toastContainer.text(toastMessage);
+            toastContainer.show();
+
+            // Implement your custom toast appearance and behavior here
+            // Example: toastContainer.addClass('show-toast');
+            // Example: setTimeout(function () { toastContainer.removeClass('show-toast'); }, 3000);
+        }
+    });
+</script>
+
+    }
+}
+else
+{
+    <h1>No available users</h1> 
+}
