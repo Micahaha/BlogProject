@@ -29,6 +29,13 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Post">Create a Post</a>
                         </li>
+                        @if(User.IsInRole("Admin"))
+                        {
+                         <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Manage" asp-action="List">Manage</a>
+                        </li>
+                        }
+                       
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>

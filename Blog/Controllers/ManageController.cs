@@ -9,7 +9,6 @@ using System.Diagnostics;
 
 namespace BlogProject.Controllers
 {
-    [Authorize]
     public class ManageController : Controller
     {
 
@@ -28,7 +27,7 @@ namespace BlogProject.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            return RedirectToAction(nameof(List));
         }
 
         public IActionResult Create() 
@@ -66,6 +65,14 @@ namespace BlogProject.Controllers
             }
 
             return View(role);
+        }
+        public async Task<IActionResult> Delete(string id) 
+        {
+            var selected_role = await roleManager.FindByIdAsync(id);
+            if (selected_role != null)
+                await roleManager.DeleteAsync(selected_role);
+
+            return RedirectToAction(nameof(Index));
         }
 
         public async Task<IActionResult> Edit(string id) 
@@ -156,6 +163,29 @@ namespace BlogProject.Controllers
 
             var users = userManager.Users;
             
+            return View(users);
+
+        }
+
+        public IActionResult Remove()
+        {
+            var users = userManager.Users;
+            return View(users);
+        }
+        [HttpPost]
+        public async Task<IActionResult> Remove(string id)
+        {
+
+            var user = await userManager.FindByIdAsync(id);
+            var result = await userManager.RemoveFromRoleAsync(user, "Admin");
+
+            if (result.Succeeded)
+                return RedirectToAction("Index", "home");
+
+            TempData["ToastMessage"] = "An error occurred: " + result.Errors;
+
+            var users = userManager.Users;
+
             return View(users);
 
         }

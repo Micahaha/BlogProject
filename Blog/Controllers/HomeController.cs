@@ -72,7 +72,7 @@ namespace BlogProject.Controllers
             return RedirectToAction(nameof(Blog), new { id = blogId });
         }
 
-        [Authorize(Policy = "Poster")]
+        [Authorize(Roles = "Admin")]
         public IActionResult Post()
         {
             List<SelectListItem> options = new List<SelectListItem>()
