@@ -26,16 +26,19 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
-                        <li class="nav-item">
+                        @if (User.IsInRole("Poster"))
+                        {
+                           <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Post">Create a Post</a>
-                        </li>
+                           </li>  
+                        }
+
                         @if(User.IsInRole("Admin"))
                         {
                          <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Manage" asp-action="List">Manage</a>
                         </li>
                         }
-                       
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
