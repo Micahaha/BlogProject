@@ -16,9 +16,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Azure Login
-        uses: Azure/login@v1.4.6
-
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v1
         with:
