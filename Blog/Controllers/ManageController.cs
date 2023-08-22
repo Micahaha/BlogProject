@@ -75,8 +75,10 @@ namespace BlogProject.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> Edit(string id) 
+        public async Task<IActionResult> Edit(string id)
         {
+            var users =  userManager.Users;
+
             var role = await roleManager.FindByIdAsync(id);
 
             if (role == null)
@@ -91,8 +93,9 @@ namespace BlogProject.Controllers
                 RoleName = role.Name
             };
 
+
             // Retrieve all the Users
-            foreach (var user in userManager.Users)
+            foreach (var user in users)
             {
                 // If the user is in this role, add the username to
                 // Users property of EditRoleViewModel. This model
@@ -167,9 +170,20 @@ namespace BlogProject.Controllers
 
         }
 
-        public IActionResult Remove()
+        public async Task<IActionResult> RemoveAsync(string roleId)
         {
+            var current_role = await roleManager.FindByIdAsync(roleId);
+            var role_name = await roleManager.GetRoleNameAsync(current_role);
             var users = userManager.Users;
+            var roles = new List<IdentityRole>();
+
+            foreach (var user in users) 
+            {
+                if (await userManager.IsInRoleAsync(user, role_name)) 
+                {
+                    roles.Add(await roleManager.FindByNameAsync(role_name));
+                }
+            }
             return View(users);
         }
         [HttpPost]
@@ -178,6 +192,7 @@ namespace BlogProject.Controllers
 
             var user = await userManager.FindByIdAsync(id);
             var result = await userManager.RemoveFromRoleAsync(user, "Admin");
+
 
             if (result.Succeeded)
                 return RedirectToAction("Index", "home");
