@@ -53,5 +53,5 @@ jobs:
         with:
           app-name: 'chamisblog'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_7382170BBE1148629DD8D938EC417B23 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_08B4E3DD941648ECABD61CAFF7EBE25B }}
           package: .
