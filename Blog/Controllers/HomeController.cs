@@ -90,7 +90,7 @@ namespace BlogProject.Controllers
 
 
         [HttpPost]
-        [Authorize(Roles = "Pos")]
+        [Authorize(Roles = "Admin")]
         public IActionResult Post(Blog blog) 
         { 
             blog.Comments = new List<Comment>();

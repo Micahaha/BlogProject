@@ -46,12 +46,12 @@ namespace BlogProject.Controllers
         {
             if (ModelState.IsValid) 
             {
-                IdentityRole identityRole = new IdentityRole
+                var identityRole = new IdentityRole
                 {
                     Name = role.RoleName
                 };
 
-                IdentityResult result = await roleManager.CreateAsync(identityRole);
+                var result = await roleManager.CreateAsync(identityRole);
 
                 if (result.Succeeded) 
                 {
