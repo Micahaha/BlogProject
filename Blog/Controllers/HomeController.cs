@@ -4,6 +4,7 @@ using BlogProject.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace BlogProject.Controllers
@@ -31,21 +32,26 @@ namespace BlogProject.Controllers
             {
                 blogService.AddComment(blogId, text, User.Identity.Name);
             }
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
 
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> Like(int blogId, int commentId)
         {
+            int updated_likes = 0;
+
             if (User.Identity.IsAuthenticated)
             {
+
                 await blogService.AddLike(blogId, commentId);
                 await context.SaveChangesAsync();
+                updated_likes = blogService.Check_Likes(blogId, commentId);
 
+                // UPDATE LIKES
             }
+            return Json(new { Likes = updated_likes });
 
-            return RedirectToAction(nameof(Blog), new { id = blogId });
         }
 
         public IActionResult Like() 
@@ -104,7 +110,7 @@ namespace BlogProject.Controllers
 
         public IActionResult Blog(int id) 
         {
-           var blog = blogService.GetBlog(id);
+            var blog = blogService.GetBlog(id);
             return View(blog);
         }
        

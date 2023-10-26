@@ -20,34 +20,26 @@
                 {
                      <h3 class="p-3">Comments</h3> 
                         @foreach(var comment in Model.Comments)
-                        {    
-                            <div class="border-start border-3 p-3">
+                        {
+                            <div id="comment" class="border-start border-3 p-3">
                             <h5 class="text-primary fw-lighter ">@comment.User <text class="fs-6 text-secondary">@comment.CreatedDateTime</text> </h5>
                             <p class="fw-light card-text">@comment.Text</p>
-                            <p><i class="bi bi-hand-thumbs-up"></i> @comment.Likes  <i class="bi bi-hand-thumbs-down"></i> @comment.Dislikes</p>
-                           
-                             <div class="d-flex">
-                            <form asp-controller="Home" asp-action="Like" method="post">
-                                <input type="hidden" name="blogId" value="@Model.BlogId" />
-                                <input type="hidden" name="commentId" value="@comment.Id" />
+                            <p><i class="bi bi-hand-thumbs-up"></i><span id="likeCount_@comment.Id">@comment.Likes</span> <i class="bi bi-hand-thumbs-down"></i> <span id="dislikeCount_@comment.Id">@comment.Dislikes</span></p>
+
+                        <div class="d-flex">
                                 <div class="col p-3">
-                                    <button class="btn btn-primary" type="submit">
-                                    <i class="bi bi-hand-thumbs-up "></i>Like 
-                                    </button>
+                                <button onclick="likeComment(@Model.BlogId, @comment.Id)">Like
+                                <i class="bi bi-hand-thumbs-up"></i>Like
+                                </button>
                                 </div>
-                           </form>
-                           <form asp-controller="Home" asp-action="Dislike" method="post">
-                                <input type="hidden" name="blogId" value="@Model.BlogId" />
-                                <input type="hidden" name="commentId" value="@comment.Id" />
+
                                 <div class="col p-3">
-                                    <button class="btn btn-danger" type="submit">
-                                    <i class="bi bi-hand-thumbs-down"></i>Dislike 
-                                    </button>
+                                <button onclick="dislikeComment(@comment.Id)">Dislike
+                                <i class="bi bi-hand-thumbs-down"></i>Dislike
+                                </button>
                                 </div>
-                           </form>
                            </div>
-                            
-                           </div>
+                          </div>
                        
                         } 
 
@@ -69,8 +61,46 @@
                    </div>
            
                 }
-              
-
             </div>
         </div>
 </div>
+@section Scripts
+{
+    <script>
+        setInterval(function () {
+            // Loop through all comments and update their counters
+            $("#comment").each(function () {
+                var commentId = $(this).data("comment-id");
+                var blogId = $(this).data("blog-id");
+                updateCounters(blogId, commentId);
+            });
+        }, 50);
+
+        function updateCounters(blogId, commentId) {
+            $.get(`/Home/GetCommentCounts?blogId=${blogId}&commentId=${commentId}`, function (data) {
+                $(`#likeCount_${commentId}`).text(data.Likes);
+                $(`#dislikeCount_${commentId}`).text(data.Dislikes);
+            }).fail(function (error) {
+                console.error(error);
+            });
+        }
+
+        function likeComment(blogId, commentId) {
+            $.post(`/Home/Like?blogId=${blogId}&commentId=${commentId}`, function (data) {
+                // Update the "Like" count on the page
+                $(`#likeCount_${commentId}`).text(data.Likes);
+            }).fail(function (error) {
+                console.error(error);
+            });
+        }
+
+        function dislikeComment(commentId) {
+                $.post(`/Home/Dislike?commentId=${commentId}&blogId=${blogId}`, function (data) {
+                // Update the "Dislike" count on the page
+                $(`#dislikeCount_${commentId}`).text(data.Dislikes);
+            }).fail(function (error) {
+                console.error(error);
+            });
+        }
+    </script>
+}
