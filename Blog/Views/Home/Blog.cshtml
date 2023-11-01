@@ -1,10 +1,72 @@
 ﻿@model Blog
 
 
+@section Scripts
+    {
+    <script>
+        function likeComment(blogId, commentId, dislikeCountElementId, likeCountElementId) {
+            // Get a reference to the like count element
+            var likeCountElement = document.getElementById(likeCountElementId);
+            var dislikeCountElement = document.getElementById(dislikeCountElementId);
+
+            // Make the AJAX request to the Like action
+            fetch(`/Home/Like?blogId=${blogId}&commentId=${commentId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Check if the like count element exists
+                    if (likeCountElement && dislikeCountElement) {
+                        // Update the like count on the page
+                        console.log('like Count exists')
+                        console.log(`likes=${data.likes}`)
+                        likeCountElement.textContent = `${data.likes}`;
+                        dislikeCountElement.textContent = `${data.dislikes}`;
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
+
+        function dislikeComment(blogId, commentId, dislikeCountElementId, likeCountElementId) {
+            // Get a reference to the like count element
+            var likeCountElement = document.getElementById(likeCountElementId);
+            var dislikeCountElement = document.getElementById(dislikeCountElementId);
+
+            // Make the AJAX request to the Like action
+            fetch(`/Home/Dislike?blogId=${blogId}&commentId=${commentId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Check if the like count element exists
+                    if (likeCountElement && dislikeCountElement) {
+                        // Update the like count on the page
+                        console.log('like Count exists')
+                        console.log(`likes=${data.likes}`)
+                        likeCountElement.textContent = `${data.likes}`;
+                        dislikeCountElement.textContent = `${data.dislikes}`;
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
+
+    </script>
+}
+
 
 <div class="container p-3">
             <div class="row justify-content-center">
-            <div class="col-8 border border-3 border-light rounded-3">
+            <div class="col-8" id="text-blocks">
                 <article class="blog-post rounded">
                     <h5 class="fw-bold">@Model.Tag.Name</h5> 
                     <h1 class="fw-bold blog-post-title display-2 lh-1">@Model.Title</h1>
@@ -18,30 +80,34 @@
 
                 @if (Model.Comments.Count > 0)
                 {
-                     <h3 class="p-3">Comments</h3> 
-                        @foreach(var comment in Model.Comments)
-                        {
-                            <div id="comment" class="border-start border-3 p-3">
-                            <h5 class="text-primary fw-lighter ">@comment.User <text class="fs-6 text-secondary">@comment.CreatedDateTime</text> </h5>
-                            <p class="fw-light card-text">@comment.Text</p>
-                            <p><i class="bi bi-hand-thumbs-up"></i><span id="likeCount_@comment.Id">@comment.Likes</span> <i class="bi bi-hand-thumbs-down"></i> <span id="dislikeCount_@comment.Id">@comment.Dislikes</span></p>
+                     <h3 class="p-3">Comments</h3>
+                @foreach (var comment in Model.Comments)
+                {
+                    <div id="comment_@comment.Id" class="border-start border-3 p-3">
+                        <h5 class="text-primary fw-lighter">@comment.User <text class="fs-6 text-secondary">@comment.CreatedDateTime</text></h5>
+                        <p class="fw-light card-text">@comment.Text</p>
+                        <p>
+                            <i class="bi bi-hand-thumbs-up"></i>
+                            <span id="likeCount_@comment.Id">@comment.Likes</span>
+                            <i class="bi bi-hand-thumbs-down"></i>
+                            <span id="dislikeCount_@comment.Id">@comment.Dislikes</span>
+                        </p>
 
                         <div class="d-flex">
-                                <div class="col p-3">
-                                <button onclick="likeComment(@Model.BlogId, @comment.Id)">Like
-                                <i class="bi bi-hand-thumbs-up"></i>Like
+                            <div class="col p-3">
+                                <button class="btn btn-outline-light" onclick="likeComment(@Model.BlogId, @comment.Id, 'dislikeCount_@comment.Id','likeCount_@comment.Id')">
+                                    <i class="bi bi-hand-thumbs-up"></i>Like
                                 </button>
-                                </div>
+                            </div>
 
-                                <div class="col p-3">
-                                <button onclick="dislikeComment(@comment.Id)">Dislike
-                                <i class="bi bi-hand-thumbs-down"></i>Dislike
+                            <div class="col p-3">
+                                <button class="btn btn-outline-light" onclick="dislikeComment(@Model.BlogId, @comment.Id, 'dislikeCount_@comment.Id','likeCount_@comment.Id')">
+                                    <i class="bi bi-hand-thumbs-down"></i>Dislike
                                 </button>
-                                </div>
-                           </div>
-                          </div>
-                       
-                        } 
+                            </div>
+                        </div>
+                    </div>
+                }
 
                 }
 
@@ -64,43 +130,3 @@
             </div>
         </div>
 </div>
-@section Scripts
-{
-    <script>
-        setInterval(function () {
-            // Loop through all comments and update their counters
-            $("#comment").each(function () {
-                var commentId = $(this).data("comment-id");
-                var blogId = $(this).data("blog-id");
-                updateCounters(blogId, commentId);
-            });
-        }, 50);
-
-        function updateCounters(blogId, commentId) {
-            $.get(`/Home/GetCommentCounts?blogId=${blogId}&commentId=${commentId}`, function (data) {
-                $(`#likeCount_${commentId}`).text(data.Likes);
-                $(`#dislikeCount_${commentId}`).text(data.Dislikes);
-            }).fail(function (error) {
-                console.error(error);
-            });
-        }
-
-        function likeComment(blogId, commentId) {
-            $.post(`/Home/Like?blogId=${blogId}&commentId=${commentId}`, function (data) {
-                // Update the "Like" count on the page
-                $(`#likeCount_${commentId}`).text(data.Likes);
-            }).fail(function (error) {
-                console.error(error);
-            });
-        }
-
-        function dislikeComment(commentId) {
-                $.post(`/Home/Dislike?commentId=${commentId}&blogId=${blogId}`, function (data) {
-                // Update the "Dislike" count on the page
-                $(`#dislikeCount_${commentId}`).text(data.Dislikes);
-            }).fail(function (error) {
-                console.error(error);
-            });
-        }
-    </script>
-}

@@ -32,26 +32,52 @@ namespace BlogProject.Controllers
             {
                 blogService.AddComment(blogId, text, User.Identity.Name);
             }
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Blog), new { id = blogId});
         }
 
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> Like(int blogId, int commentId)
         {
-            int updated_likes = 0;
+            var updated_likes = 0;
+            var updated_dislikes = 0;
 
             if (User.Identity.IsAuthenticated)
             {
 
                 await blogService.AddLike(blogId, commentId);
                 await context.SaveChangesAsync();
+                updated_dislikes = blogService.Check_dislikes(blogId, commentId);
                 updated_likes = blogService.Check_Likes(blogId, commentId);
 
                 // UPDATE LIKES
             }
-            return Json(new { Likes = updated_likes });
 
+            var result = new { Dislikes = updated_dislikes, Likes = updated_likes };
+
+            return Json(result);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> Dislike(int blogId, int commentId)
+        {
+            var updated_dislikes = 0;
+            var updated_likes = 0;
+
+            if (User.Identity.IsAuthenticated)
+            {
+
+                await blogService.AddDislike(blogId, commentId);
+                await context.SaveChangesAsync();
+                updated_dislikes = blogService.Check_dislikes(blogId, commentId);
+                updated_likes = blogService.Check_Likes(blogId, commentId);
+
+                // UPDATE LIKES
+            }
+            var result = new { Dislikes = updated_dislikes, Likes = updated_likes };
+
+            return Json(result);
         }
 
         public IActionResult Like() 
@@ -64,19 +90,7 @@ namespace BlogProject.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> Dislike(int blogId, int commentId)
-        {
-            if (User.Identity.IsAuthenticated)
-            {
-                await blogService.AddDislike(blogId, commentId);
-                await context.SaveChangesAsync();
-                return RedirectToAction(nameof(Blog), new { id = blogId });
-            }
-
-            return RedirectToAction(nameof(Blog), new { id = blogId });
-        }
+       
 
         [Authorize(Roles = "Admin")]
         public IActionResult Post()

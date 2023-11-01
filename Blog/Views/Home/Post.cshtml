@@ -4,10 +4,37 @@
     ViewData["Title"] = "Post";
 }
 
-<h1>Post</h1>
+<style>
+     /* Custom CSS to make the form background transparent */
+     .form-group {
+         background-color: rgba(255, 255, 255, 0); /* Set alpha to 0 for complete transparency */
+         border: none;
+     }
 
-<h4>Blog</h4>
-<hr />
+    /* Custom CSS to make the input fields transparent */
+    .form-control {
+         background-color: rgba(41, 41, 41, 0.902); /* Set alpha to 0 for complete transparency */
+        border: none;
+        border-width: .8px; 
+        color: white;
+    }
+
+    .form-control:focus {
+        box-shadow: none;
+        color: white;
+        transition-timing-function: ease;
+        transition:.2s;
+        background-color: rgba(74, 74, 74, 0.902); /* Set alpha to 0 for complete transparency */
+    }
+
+</style>
+
+
+
+<h1>Create a Post</h1>
+
+
+<hr/>
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Post">
@@ -34,7 +61,7 @@
             </div>
              
             <div class="form-group p-2">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Create" class="btn btn-outline-light" />
             </div>
         </form>
     </div>

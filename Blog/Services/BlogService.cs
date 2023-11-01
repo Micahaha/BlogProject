@@ -117,10 +117,28 @@ namespace BlogProject.Services
                 return -1;
 
             return current_comment.Likes;
-
-              
+   
         }
 
+        public int Check_dislikes(int blogId, int commentId)
+        {
+
+            var current_blog = context.Blogs
+                .Where(blog => blog.BlogId == blogId)
+                .Include(c => c.Comments)
+                .SingleOrDefault();
+
+            if (current_blog == null)
+                return -1;
+
+            var current_comment = current_blog.Comments.FirstOrDefault(comment => comment.Id == commentId);
+
+            if (current_comment == null)
+                return -1;
+
+            return current_comment.Dislikes;
+
+        }
 
         public async Task AddDislike(int blogId, int commentId)
         {
