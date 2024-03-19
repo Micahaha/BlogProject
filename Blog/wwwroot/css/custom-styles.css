@@ -1,0 +1,24 @@
+﻿/* CSS for making input fields transparent */
+
+.form-control:focus {
+    color: white !important;
+    background-color: transparent !important;
+    
+}
+
+
+.form-control {
+    background-color: transparent;
+    color: white;
+}
+
+/* CSS for making buttons dark */
+.dark-button {
+    background-color: #343a40; /* Dark color */
+    color: white; /* Text color */
+}
+
+#bootstrap-overrides .btn {
+    background-color: red;
+}
+}

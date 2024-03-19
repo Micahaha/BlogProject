@@ -21,10 +21,19 @@ namespace BlogProject.Services
         // Get each Blog and put it in a list
         public List<Blog> GetAllBlogs() 
         {
-            return context.Blogs.Include(b => b.Author)
-                .Include(b => b.Comments)
-                .Include(b => b.Tag)
-                .ToList();   
+            try
+            {
+
+                   return context.Blogs.Include(b => b.Author)
+                   .Include(b => b.Comments)
+                   .Include(b => b.Tag)
+                    .ToList();
+                
+            }
+            catch (Exception sql) 
+            {
+                return null;
+            }
         }
 
         public Blog GetBlog(int id) 
