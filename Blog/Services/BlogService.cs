@@ -67,11 +67,26 @@ namespace BlogProject.Services
 
         public void AddComment(int blogId, string text, string username) 
         {
-            var comment = new Comment { Likes = 0, Dislikes = 0, Text = text, User = username};
+            var comment = new Comment { Likes = 0, Dislikes = 0, Text = text, User = username, BlogId=blogId};
             var current_blog = context.Blogs.Where(blog => blog.BlogId == blogId).Include(c => c.Comments).SingleOrDefault();
             current_blog.Comments.Add(comment);
             context.SaveChanges();
         }
+
+        public void AddReply(int blogId, int commentId, string text, string username)
+        {
+            var current_blog =  context.Blogs.Where(blog => blog.BlogId == blogId).Include(c => c.Comments).SingleOrDefault();
+            var current_comment = current_blog.Comments.FirstOrDefault(comment => comment.Id == commentId);
+            var comment = new Comment { Likes = 0, Dislikes = 0, Text = text, User = username, BlogId = blogId };
+
+            if (current_comment != null)
+            {
+                current_comment.Replies.Add(comment);
+            }
+
+            context.SaveChanges();
+        }
+
 
         public async Task AddLike(int blogId, int commentId)
         {

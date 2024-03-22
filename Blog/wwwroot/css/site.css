@@ -18,6 +18,17 @@ body {
     color: white;
 }
 
-#txt_block {
-    
+#bootstrap-overrides {
+    color: white;
+    background-color: #2e2e2e;
+    border-radius: 1em;
+    border-color: rgb(128, 128, 128);
+
 }
+
+#bootstrap-overrides .btn {
+    border-color: rgb(128, 128, 128)
+}
+
+
+

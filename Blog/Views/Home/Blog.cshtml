@@ -59,6 +59,7 @@
                     console.error(error);
                 });
         }
+      
 
     </script>
 }
@@ -84,7 +85,7 @@
                 @foreach (var comment in Model.Comments)
                 {
                     <div id="comment_@comment.Id" class="border-start border-3 p-3">
-                        <h5 class="text-primary fw-lighter">@comment.User <text class="fs-6 text-secondary">@comment.CreatedDateTime</text></h5>
+                        <h5 class="text-primary text-white fw-lighter">@comment.User <text class="fs-6 text-secondary">@comment.CreatedDateTime</text></h5>
                         <p class="fw-light card-text">@comment.Text</p>
                         <p>
                             <i class="bi bi-hand-thumbs-up"></i>
@@ -95,19 +96,31 @@
 
                         <div class="d-flex">
                             <div class="col p-3">
-                                <button class="btn btn-outline-light" onclick="likeComment(@Model.BlogId, @comment.Id, 'dislikeCount_@comment.Id','likeCount_@comment.Id')">
-                                    <i class="bi bi-hand-thumbs-up"></i>Like
+                                <button class="btn btn-dark" onclick="likeComment(@Model.BlogId, @comment.Id, 'dislikeCount_@comment.Id','likeCount_@comment.Id')">
+                                    <i class="bi bi-hand-thumbs-up p-1"></i>Like
                                 </button>
                             </div>
 
                             <div class="col p-3">
-                                <button class="btn btn-outline-light" onclick="dislikeComment(@Model.BlogId, @comment.Id, 'dislikeCount_@comment.Id','likeCount_@comment.Id')">
-                                    <i class="bi bi-hand-thumbs-down"></i>Dislike
+                                <button class="btn btn-dark" onclick="dislikeComment(@Model.BlogId, @comment.Id, 'dislikeCount_@comment.Id','likeCount_@comment.Id')">
+                                    <i class="bi bi-hand-thumbs-down p-1"></i>Dislike
                                 </button>
                             </div>
+
+                            <div class="col p-3">
+                                <button class="btn btn-secondary" onclick="dislikeComment(@Model.BlogId, @comment.Id, 'dislikeCount_@comment.Id','likeCount_@comment.Id')">Reply</button>
+                            </div>
+                        </div>
+                        <div id="reply_container">
+                            @{
+                                await Html.PartialAsync("_Reply", comment);
+                            }
+
                         </div>
                     </div>
                 }
+
+
 
                 }
 
@@ -119,11 +132,10 @@
                                 <input type="hidden" name="blogId" value="@Model.BlogId" />
                                 <input type="text"  name="text" class="form-control" placeholder="Posting as @User.Identity.Name">
                                 <div class="col p-3">
-                                    <button class="btn btn-primary" type="submit">Send</button>
+                                    <button class="btn btn-dark btn-primary" type="submit">Send</button>
                                 </div>
                            </form>
                         </div>
-                        
                    </div>
            
                 }

@@ -13,7 +13,7 @@ namespace BlogProject.Models
         public string Description { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public Tag Tag { get; set;  }
-        public List<Comment> Comments { get; set;  } 
+        public List<Comment> Comments { get; set; }
         public Author Author { get; set; }
 
     }

@@ -9,10 +9,47 @@
     }
 }
 
-<h1>Manage your account</h1>
+<style>
+    #bootstrap-overrides .btn .nav-link active {
+        background-color: #2e2e2e;
+        color: white;
+    }
 
+    .btn-primary {
+        border-color: white !important;
+    }
+
+    #bootstrap-overrides .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+        background-color: #2e2e2e;
+    }
+
+    #bootstrap-overrides .nav-link {
+        color: rgba(255, 255, 255, .55);
+        transition: .15s ease-in-out, .15s ease-in-out,border-color .15s ease-in-out;
+    }
+
+    #bootstrap-overrides .form-floating {
+        
+         padding: .4rem !important; 
+        
+    }
+
+    #bootstrap-overrides .form-control:disabled {
+        background-color: rgba(0, 0, 0, 0.60);
+        opacity: .3;
+    }
+
+    #bootstrap-overrides .input-group-text {
+        background-color: rgba(0, 0, 0, 0.60);
+        opacity: .3;
+        color: white;
+    }
+</style>
+
+<h1 class="text-center">Manage your account</h1>
+
+<body id="bootstrap-overrides">
 <div>
-    <h2>Change your account settings</h2>
     <hr />
     <div class="row">
         <div class="col-md-3">
@@ -23,6 +60,7 @@
         </div>
     </div>
 </div>
+</body>
 
 @section Scripts {
     @RenderSection("Scripts", required: false)

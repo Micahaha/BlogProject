@@ -1,0 +1,113 @@
+﻿@model Comment
+
+@section Scripts
+{
+    <script>
+        function likeComment(blogId, commentId, dislikeCountElementId, likeCountElementId) {
+            // Get a reference to the like count element
+            var likeCountElement = document.getElementById(likeCountElementId);
+            var dislikeCountElement = document.getElementById(dislikeCountElementId);
+
+            // Make the AJAX request to the Like action
+            fetch(`/Home/Like?blogId=${blogId}&commentId=${commentId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Check if the like count element exists
+                    if (likeCountElement && dislikeCountElement) {
+                        // Update the like count on the page
+                        console.log('like Count exists')
+                        console.log(`likes=${data.likes}`)
+                        likeCountElement.textContent = `${data.likes}`;
+                        dislikeCountElement.textContent = `${data.dislikes}`;
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
+
+        function dislikeComment(blogId, commentId, dislikeCountElementId, likeCountElementId) {
+            // Get a reference to the like count element
+            var likeCountElement = document.getElementById(likeCountElementId);
+            var dislikeCountElement = document.getElementById(dislikeCountElementId);
+
+            // Make the AJAX request to the Like action
+            fetch(`/Home/Dislike?blogId=${blogId}&commentId=${commentId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Check if the like count element exists
+                    if (likeCountElement && dislikeCountElement) {
+                        // Update the like count on the page
+                        console.log('like Count exists')
+                        console.log(`likes=${data.likes}`)
+                        likeCountElement.textContent = `${data.likes}`;
+                        dislikeCountElement.textContent = `${data.dislikes}`;
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
+
+    </script>
+}
+
+
+@if(Model.Replies.Count() > 0)
+@foreach (var reply in Model.Replies)
+{
+    <div id="reply_@reply.Id" class="border-start border-3 p-3">
+        <h5 class="text-primary text-white fw-lighter">@reply.User <text class="fs-6 text-secondary">@reply.CreatedDateTime</text></h5>
+        <p class="fw-light card-text">@reply.Text</p>
+        <p>
+            <i class="bi bi-hand-thumbs-up"></i>
+            <span id="likeCount_@reply.Id">@reply.Likes</span>
+            <i class="bi bi-hand-thumbs-down"></i>
+            <span id="dislikeCount_@reply.Id">@reply.Dislikes</span>
+        </p>
+
+        <div class="d-flex">
+            <div class="col p-3">
+                <button class="btn btn-dark" onclick="likeComment(@Model.BlogId, @reply.Id, 'dislikeCount_@reply.Id','likeCount_@reply.Id')">
+                    <i class="bi bi-hand-thumbs-up p-1"></i>Like
+                </button>
+            </div>
+
+            <div class="col p-3">
+                <button class="btn btn-dark" onclick="dislikeComment(@Model.BlogId, @reply.Id, 'dislikeCount_@reply.Id','likeCount_@reply.Id')">
+                    <i class="bi bi-hand-thumbs-down p-1"></i>Dislike
+                </button>
+            </div>
+
+            <div class="col p-3">
+                <button class="btn btn-secondary" onclick="dislikereply(@Model.BlogId, @reply.Id, 'dislikeCount_@reply.Id','likeCount_@reply.Id')">Reply</button>
+            </div>
+        </div>
+    </div>
+
+        @if (User.Identity.IsAuthenticated)
+        {
+            <div class="col p-3">
+                <div class="col">
+                    <form asp-controller="Home" asp-action="AddReply" method="post">
+                    <input type="hidden" name="commentId" value="@Model.Id" />
+                        <input type="hidden" name="blogId" value="@Model.BlogId" />
+                        <input type="text" name="text" class="form-control" placeholder="Commenting as @User.Identity.Name">
+                        <div class="col p-3">
+                            <button class="btn btn-dark btn-primary" type="submit">Send</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        }
+}

@@ -36,6 +36,19 @@ namespace BlogProject.Controllers
             return RedirectToAction(nameof(Blog), new { id = blogId});
         }
 
+
+        [HttpPost]
+        public IActionResult AddReply(int blogId, int commentId, string text)
+        {
+            if (ModelState.IsValid)
+            {
+                blogService.AddReply(blogId, commentId, text, User.Identity.Name);
+            }
+
+            return RedirectToAction(nameof(Blog), new { id = blogId });
+        }
+
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> Like(int blogId, int commentId)
@@ -81,6 +94,7 @@ namespace BlogProject.Controllers
             return Json(result);
         }
 
+
         public IActionResult Like() 
         {
             return RedirectToAction(nameof(Index));
@@ -93,7 +107,6 @@ namespace BlogProject.Controllers
 
        
 
-        [Authorize(Roles = "Admin")]
         public IActionResult Post()
         {
             List<SelectListItem> options = new List<SelectListItem>()
@@ -111,7 +124,6 @@ namespace BlogProject.Controllers
 
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
         public IActionResult Post(Blog blog) 
         { 
             blog.Comments = new List<Comment>();

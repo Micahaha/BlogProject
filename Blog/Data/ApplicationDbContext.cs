@@ -14,6 +14,7 @@ namespace BlogProject.Data
         public DbSet<Author> Authors { get; set; }
         public DbSet<Blog> Blogs {get; set;}
         public DbSet<Tag> Tags { get; set; }
+        public DbSet<Comment>? Comment { get; set; }
         
     }
 }

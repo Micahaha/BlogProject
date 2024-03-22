@@ -11,5 +11,8 @@ namespace BlogProject.Models
         public DateTime CreatedDateTime { get; set; } = DateTime.Now;
         public int Likes { get; set; }
         public int Dislikes { get; set; }
+           
+        public int BlogId { get; set; }
+        public List<Comment> Replies { get; set; }
     }
 }
