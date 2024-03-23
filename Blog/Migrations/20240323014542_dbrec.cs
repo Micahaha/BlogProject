@@ -4,7 +4,7 @@
 
 namespace BlogProject.Migrations
 {
-    public partial class replies1 : Migration
+    public partial class dbrec : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

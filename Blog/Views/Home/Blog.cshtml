@@ -112,11 +112,8 @@
                             </div>
                         </div>
                         <div id="reply_container">
-                            @{
-                                await Html.PartialAsync("_Reply", comment);
-                            }
-
-                        </div>
+                            @await Html.PartialAsync("~/Views/Shared/_Reply.cshtml", comment) 
+                         </div>
                     </div>
                 }
 

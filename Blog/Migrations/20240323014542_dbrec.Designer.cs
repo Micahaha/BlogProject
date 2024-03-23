@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlogProject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240319025705_init")]
-    partial class init
+    [Migration("20240323014542_dbrec")]
+    partial class dbrec
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -158,7 +158,7 @@ namespace BlogProject.Migrations
                     b.Property<string>("ApplicationUserId1")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("BlogId")
+                    b.Property<int>("BlogId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedDateTime")
@@ -168,6 +168,9 @@ namespace BlogProject.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("Likes")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ParentCommentId")
                         .HasColumnType("int");
 
                     b.Property<string>("Text")
@@ -185,6 +188,8 @@ namespace BlogProject.Migrations
                     b.HasIndex("ApplicationUserId1");
 
                     b.HasIndex("BlogId");
+
+                    b.HasIndex("ParentCommentId");
 
                     b.ToTable("Comment");
                 });
@@ -374,7 +379,16 @@ namespace BlogProject.Migrations
 
                     b.HasOne("BlogProject.Models.Blog", null)
                         .WithMany("Comments")
-                        .HasForeignKey("BlogId");
+                        .HasForeignKey("BlogId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BlogProject.Models.Comment", "ParentComment")
+                        .WithMany("Replies")
+                        .HasForeignKey("ParentCommentId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("ParentComment");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -438,6 +452,11 @@ namespace BlogProject.Migrations
             modelBuilder.Entity("BlogProject.Models.Blog", b =>
                 {
                     b.Navigation("Comments");
+                });
+
+            modelBuilder.Entity("BlogProject.Models.Comment", b =>
+                {
+                    b.Navigation("Replies");
                 });
 #pragma warning restore 612, 618
         }

@@ -22,8 +22,8 @@ namespace BlogProject.Controllers
         public IActionResult Index()
         {
 
-            var blog = blogService.GetAllBlogs();
-            return blog == null ? View() : View(blog);
+            var blogs =  blogService.GetAllBlogs();
+            return blogs == null ? View() : View(blogs);
         }
 
         [HttpPost]
@@ -38,15 +38,21 @@ namespace BlogProject.Controllers
 
 
         [HttpPost]
-        public IActionResult AddReply(int blogId, int commentId, string text)
+        public IActionResult _Reply(int commentId, string text)
         {
             if (ModelState.IsValid)
             {
-                blogService.AddReply(blogId, commentId, text, User.Identity.Name);
+                blogService.AddReply(commentId, text, User.Identity.Name);
             }
 
-            return RedirectToAction(nameof(Blog), new { id = blogId });
+            return RedirectToAction(nameof(Blog), new { id = blogService.getBlogFromComment(commentId).BlogId});
         }
+
+        public IActionResult _Reply()
+        {
+            return PartialView(nameof(_Reply));
+        }
+
 
 
         [Authorize]
@@ -140,6 +146,7 @@ namespace BlogProject.Controllers
             var blog = blogService.GetBlog(id);
             return View(blog);
         }
+
        
         public IActionResult Privacy()
         {

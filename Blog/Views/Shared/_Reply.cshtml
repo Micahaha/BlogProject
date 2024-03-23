@@ -62,12 +62,27 @@
     </script>
 }
 
+@if (User.Identity.IsAuthenticated)
+{
+    <div class="col p-3">
+        <div class="col">
+            <form asp-controller="Home" asp-action="_Reply" method="post">
+                <input type="hidden" name="commentId" value="@Model.Id" />
+                <input type="text" name="text" class="form-control" placeholder="Replying as @User.Identity.Name">
+                <div class="col p-3">
+                    <button class="btn btn-dark btn-primary" type="submit">Send</button>
+                </div>
+            </form>
+        </div>
+    </div>
+}
 
-@if(Model.Replies.Count() > 0)
+
+@if(Model.Replies?.Count() > 0)
 @foreach (var reply in Model.Replies)
 {
     <div id="reply_@reply.Id" class="border-start border-3 p-3">
-        <h5 class="text-primary text-white fw-lighter">@reply.User <text class="fs-6 text-secondary">@reply.CreatedDateTime</text></h5>
+            <h5 class="text-primary text-white fw-lighter">@reply.User <text class="fs-6 text-secondary">@reply.CreatedDateTime <p>Replying to @reply.ParentComment.User</p></text></h5>
         <p class="fw-light card-text">@reply.Text</p>
         <p>
             <i class="bi bi-hand-thumbs-up"></i>
@@ -95,19 +110,4 @@
         </div>
     </div>
 
-        @if (User.Identity.IsAuthenticated)
-        {
-            <div class="col p-3">
-                <div class="col">
-                    <form asp-controller="Home" asp-action="AddReply" method="post">
-                    <input type="hidden" name="commentId" value="@Model.Id" />
-                        <input type="hidden" name="blogId" value="@Model.BlogId" />
-                        <input type="text" name="text" class="form-control" placeholder="Commenting as @User.Identity.Name">
-                        <div class="col p-3">
-                            <button class="btn btn-dark btn-primary" type="submit">Send</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        }
 }

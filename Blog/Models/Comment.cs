@@ -13,6 +13,9 @@ namespace BlogProject.Models
         public int Dislikes { get; set; }
            
         public int BlogId { get; set; }
-        public List<Comment> Replies { get; set; }
+
+        public int? ParentCommentId { get; set; }
+        public Comment? ParentComment { get; set; }
+        public List<Comment>? Replies { get; set; }
     }
 }

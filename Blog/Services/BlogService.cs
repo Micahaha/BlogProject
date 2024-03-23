@@ -2,6 +2,8 @@
 using BlogProject.Data;
 using BlogProject.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlogProject.Services
@@ -32,7 +34,7 @@ namespace BlogProject.Services
             }
             catch (Exception sql) 
             {
-                return null;
+                return null;    
             }
         }
 
@@ -67,26 +69,43 @@ namespace BlogProject.Services
 
         public void AddComment(int blogId, string text, string username) 
         {
-            var comment = new Comment { Likes = 0, Dislikes = 0, Text = text, User = username, BlogId=blogId};
+            var comment = new Comment { Likes = 0, Dislikes = 0, Text = text, User = username, BlogId=blogId, Replies = new List<Comment>(), ParentComment = null, ParentCommentId = null};
             var current_blog = context.Blogs.Where(blog => blog.BlogId == blogId).Include(c => c.Comments).SingleOrDefault();
             current_blog.Comments.Add(comment);
             context.SaveChanges();
         }
 
-        public void AddReply(int blogId, int commentId, string text, string username)
+        public void AddReply(int commentId, string text, string username)
         {
-            var current_blog =  context.Blogs.Where(blog => blog.BlogId == blogId).Include(c => c.Comments).SingleOrDefault();
-            var current_comment = current_blog.Comments.FirstOrDefault(comment => comment.Id == commentId);
-            var comment = new Comment { Likes = 0, Dislikes = 0, Text = text, User = username, BlogId = blogId };
 
-            if (current_comment != null)
+            var current_blog = context.Comment
+                .Where(comment => comment.Id == commentId)
+                .Join(context.Blogs, comment => comment.BlogId, blog => blog.BlogId, (comment, blog) => blog).SingleOrDefault();
+  
+            var parent_comment = context.Comment
+            .FirstOrDefault(comment => comment.Id == commentId);
+
+            if (current_blog != null)
             {
-                current_comment.Replies.Add(comment);
+                if (parent_comment.Replies == null)
+                {
+                    parent_comment.Replies = new List<Comment>(); // Initialize Replies if null
+                }
+                var comment = new Comment { Likes = 0, Dislikes = 0, Text = text, User = username, BlogId = current_blog.BlogId, Replies = new List<Comment>(), ParentComment = parent_comment, ParentCommentId = commentId  };
+                parent_comment.Replies.Add(comment);
             }
 
             context.SaveChanges();
         }
 
+        public Blog getBlogFromComment(int commentId)
+        {
+            var  blog_obj = context.Comment
+                .Where(comment => comment.Id == commentId)
+                .Join(context.Blogs, comment => comment.BlogId, blog => blog.BlogId, (comment, blog) => blog).SingleOrDefault();
+
+            return blog_obj;
+        }
 
         public async Task AddLike(int blogId, int commentId)
         {

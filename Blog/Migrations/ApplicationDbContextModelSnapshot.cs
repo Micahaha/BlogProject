@@ -159,9 +159,6 @@ namespace BlogProject.Migrations
                     b.Property<int>("BlogId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("CommentId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CreatedDateTime")
                         .HasColumnType("datetime2");
 
@@ -169,6 +166,9 @@ namespace BlogProject.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("Likes")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ParentCommentId")
                         .HasColumnType("int");
 
                     b.Property<string>("Text")
@@ -187,7 +187,7 @@ namespace BlogProject.Migrations
 
                     b.HasIndex("BlogId");
 
-                    b.HasIndex("CommentId");
+                    b.HasIndex("ParentCommentId");
 
                     b.ToTable("Comment");
                 });
@@ -381,9 +381,12 @@ namespace BlogProject.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BlogProject.Models.Comment", null)
+                    b.HasOne("BlogProject.Models.Comment", "ParentComment")
                         .WithMany("Replies")
-                        .HasForeignKey("CommentId");
+                        .HasForeignKey("ParentCommentId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("ParentComment");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
