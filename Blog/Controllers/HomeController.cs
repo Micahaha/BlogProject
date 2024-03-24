@@ -22,8 +22,10 @@ namespace BlogProject.Controllers
         public IActionResult Index()
         {
 
-            var blogs =  blogService.GetAllBlogs();
-            return blogs == null ? View() : View(blogs);
+
+            return View(blogService.GetAllBlogs());
+           
+
         }
 
         [HttpPost]

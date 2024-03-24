@@ -107,11 +107,9 @@
                                 </button>
                             </div>
 
-                            <div class="col p-3">
-                                <button class="btn btn-secondary" onclick="dislikeComment(@Model.BlogId, @comment.Id, 'dislikeCount_@comment.Id','likeCount_@comment.Id')">Reply</button>
-                            </div>
+                           
                         </div>
-                        <div id="reply_container">
+                        <div class="container-sm" id="reply_container">
                             @await Html.PartialAsync("~/Views/Shared/_Reply.cshtml", comment) 
                          </div>
                     </div>

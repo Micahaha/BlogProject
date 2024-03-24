@@ -11,6 +11,8 @@
 </div>
 
 
+@if (Model != null && Model.Count() > 0)
+{
     @foreach (var blog in Model)
     {
         <div class="container p-3">
@@ -27,8 +29,8 @@
                 </div>
             </div>
         </div>
-
     }
+}
 
 
 

@@ -26,9 +26,15 @@ body {
 
 }
 
-#bootstrap-overrides .btn {
-    border-color: rgb(128, 128, 128)
+#reply_container {
+    background-color: black;
+    border: solid 2px 2px;
 }
+
+#bootstrap-overrides .btn {
+    border-color: rgb(128, 128, 128);
+}
+
 
 
 
