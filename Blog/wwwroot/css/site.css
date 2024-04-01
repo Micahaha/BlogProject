@@ -20,12 +20,21 @@ body {
 
 #bootstrap-overrides {
     color: white;
-    background-color: #2e2e2e;
     border-radius: 1em;
     border-color: rgb(128, 128, 128);
 
 }
 
+#bootstrap-overrides-cards {
+    color: black !important;
+    border-color: rgb(128, 128, 128);
+    border-radius: 1em;
+}
+
+#ignore option 
+{
+    color: black;
+}
 #reply_container {
     background-color: black;
     border: solid 2px 2px;

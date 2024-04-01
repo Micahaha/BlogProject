@@ -73,7 +73,14 @@
                     <h1 class="fw-bold blog-post-title display-2 lh-1">@Model.Title</h1>
                     <h2 class="fw-lighter fst-italic">@Model.Header</h2> 
                     <p class=" font-monospace blog-post-meta">@Model.CreatedDate by @Model.Author.User</p>
+                    <hr />
                     <p>@Model.Description</p>
+                    
+                @if(Model.ThumbnailPathUrl != null)
+                {
+                    <hr />
+                    <img src="/@Model.ThumbnailPathUrl" class="img-thumbnail rounded mx-auto d-block">
+                }
                     <hr>
                 </article>
 

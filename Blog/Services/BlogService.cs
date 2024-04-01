@@ -24,11 +24,14 @@ namespace BlogProject.Services
         public List<Blog> GetAllBlogs() 
         {
                
-                return context.Blogs.Include(b => b.Author)
-                   .Include(b => b.Comments)
-                   .Include(b => b.Tag)
-                   .ToList();   
-                  
+            return context.Blogs
+                .Include(b => b.Author)
+                .Include(b => b.Comments)
+                .Include(b => b.Tag)
+                .ToList();
+
+            
+
         }
 
         public Blog GetBlog(int id) 

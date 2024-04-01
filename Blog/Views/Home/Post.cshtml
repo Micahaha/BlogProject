@@ -1,4 +1,4 @@
-﻿@model BlogProject.Models.Blog
+﻿@model Blog
 
 @{
     ViewData["Title"] = "Post";
@@ -36,8 +36,8 @@
 
 <hr/>
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Post">
+    <div id="bootstrap-overrides" class="col-md-4">
+        <form EncType="multipart/form-data" asp-action="Post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Title" class="control-label"></label>
@@ -55,9 +55,17 @@
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
                 <div class="form-group">
-                    <div class="form-group pt-3">
+                    <div id="ignore" class="form-group pt-3">
                     @Html.DropDownListFor(blog => blog.Tag.Name, (IEnumerable<SelectListItem>)ViewData["Options"], "Select Tag", new { @class = "form-control" })
                 </div>
+            </div>
+            <div class="form-group p-3">
+                <label hidden asp-for="Thumbnail" form-label"></label>
+                <div class="custom-file">
+                    <input asp-for="Thumbnail" class="custom-file-input" id="formFile">
+                    <label class="custom-file-label" for="customFile"></label>
+                </div>
+
             </div>
             <div class="form-group p-2">
                 <input type="submit" value="Create" class="btn btn-outline-light" />

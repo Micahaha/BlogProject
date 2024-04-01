@@ -23,4 +23,7 @@
     color: white;
 }
 
+#bootstrap-overrides .form-control {
+   border: 1px solid #ced4da;
+}
 

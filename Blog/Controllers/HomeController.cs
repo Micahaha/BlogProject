@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using NuGet.ContentModel;
+using ProfanityFilter;
+using ProfanityFilter.Interfaces;
 using System.Diagnostics;
 
 namespace BlogProject.Controllers
@@ -13,10 +16,12 @@ namespace BlogProject.Controllers
     {
         private readonly BlogService blogService;
         private readonly ApplicationDbContext context;
-        public HomeController(BlogService blogService, ApplicationDbContext context)
+        private readonly IWebHostEnvironment webHostEnvironment;
+        public HomeController(BlogService blogService, ApplicationDbContext context, IWebHostEnvironment webHostEnvironment)
         {
             this.blogService = blogService;
             this.context = context;
+            this.webHostEnvironment = webHostEnvironment;
         }
 
         public IActionResult Index()
@@ -33,7 +38,12 @@ namespace BlogProject.Controllers
         {
             if (ModelState.IsValid) 
             {
-                blogService.AddComment(blogId, text, User.Identity.Name);
+
+                var filter = new SwearFilter();
+
+                if (!filter.IsProfanity(text)){
+                    blogService.AddComment(blogId, text, User.Identity.Name);
+                }
             }
             return RedirectToAction(nameof(Blog), new { id = blogId});
         }
@@ -44,7 +54,11 @@ namespace BlogProject.Controllers
         {
             if (ModelState.IsValid)
             {
-                blogService.AddReply(commentId, text, User.Identity.Name);
+                var filter = new SwearFilter();
+                if (!filter.IsProfanity(text))
+                {
+                    blogService.AddReply(commentId, text, User.Identity.Name);
+                }
             }
 
             return RedirectToAction(nameof(Blog), new { id = blogService.getBlogFromComment(commentId).BlogId});
@@ -133,12 +147,29 @@ namespace BlogProject.Controllers
 
         [HttpPost]
         public IActionResult Post(Blog blog) 
-        { 
-            blog.Comments = new List<Comment>();
-            blog.Author = new Author { User = User.Identity.Name };
-           
-            context.Add(blog);
-            context.SaveChanges();
+        {
+
+
+                if(blog.Thumbnail != null)
+                {
+                    var thumbnailPath = "thumbnails/";
+                    thumbnailPath += Guid.NewGuid() + blog.Thumbnail.FileName;
+                    var serverPath = Path.Combine(webHostEnvironment.WebRootPath, thumbnailPath);
+
+                blog.ThumbnailPathUrl = thumbnailPath; 
+
+                    blog.Thumbnail.CopyToAsync(new FileStream(serverPath, FileMode.Create));
+                }
+
+                blog.Author = new Author { User = User.Identity.Name };
+
+
+
+            if (ModelState.IsValid)
+            {
+                context.Add(blog);
+                context.SaveChanges();
+            }
 
             return RedirectToAction(nameof(Index));
         }
