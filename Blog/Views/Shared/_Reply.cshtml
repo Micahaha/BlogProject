@@ -3,62 +3,7 @@
 @section Scripts
 {
     <script>
-        function likeComment(blogId, commentId, dislikeCountElementId, likeCountElementId) {
-            // Get a reference to the like count element
-            var likeCountElement = document.getElementById(likeCountElementId);
-            var dislikeCountElement = document.getElementById(dislikeCountElementId);
-
-            // Make the AJAX request to the Like action
-            fetch(`/Home/Like?blogId=${blogId}&commentId=${commentId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-                .then(response => response.json())
-                .then(data => {
-                    // Check if the like count element exists
-                    if (likeCountElement && dislikeCountElement) {
-                        // Update the like count on the page
-                        console.log('like Count exists')
-                        console.log(`likes=${data.likes}`)
-                        likeCountElement.textContent = `${data.likes}`;
-                        dislikeCountElement.textContent = `${data.dislikes}`;
-                    }
-                })
-                .catch(error => {
-                    console.error(error);
-                });
-        }
-
-        function dislikeComment(blogId, commentId, dislikeCountElementId, likeCountElementId) {
-            // Get a reference to the like count element
-            var likeCountElement = document.getElementById(likeCountElementId);
-            var dislikeCountElement = document.getElementById(dislikeCountElementId);
-
-            // Make the AJAX request to the Like action
-            fetch(`/Home/Dislike?blogId=${blogId}&commentId=${commentId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-                .then(response => response.json())
-                .then(data => {
-                    // Check if the like count element exists
-                    if (likeCountElement && dislikeCountElement) {
-                        // Update the like count on the page
-                        console.log('like Count exists')
-                        console.log(`likes=${data.likes}`)
-                        likeCountElement.textContent = `${data.likes}`;
-                        dislikeCountElement.textContent = `${data.dislikes}`;
-                    }
-                })
-                .catch(error => {
-                    console.error(error);
-                });
-        }
-
+       
     </script>
 }
 
@@ -92,13 +37,13 @@
 
         <div class="d-flex">
             <div class="col p-3">
-                <button class="btn btn-dark" onclick="likeComment(@Model.BlogId, @reply.Id, 'dislikeCount_@reply.Id','likeCount_@reply.Id')">
+                <button class="btn btn-dark" onclick="LikeReply(@Model.BlogId, @reply.Id, @Model.Id, 'dislikeCount_@reply.Id', 'likeCount_@reply.Id')">
                     <i class="bi bi-hand-thumbs-up p-1"></i>Like
                 </button>
             </div>
 
             <div class="col p-3">
-                <button class="btn btn-dark" onclick="dislikeComment(@Model.BlogId, @reply.Id, 'dislikeCount_@reply.Id','likeCount_@reply.Id')">
+                <button class="btn btn-dark" onclick="DislikeReply(@Model.BlogId, @reply.Id, @Model.Id, 'dislikeCount_@reply.Id', 'likeCount_@reply.Id')">
                     <i class="bi bi-hand-thumbs-down p-1"></i>Dislike
                 </button>
             </div>

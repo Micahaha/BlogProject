@@ -59,6 +59,63 @@
                     console.error(error);
                 });
         }
+
+        function LikeReply(blogId, replyId, commentId, dislikeCountElementId, likeCountElementId) {
+            // Get a reference to the like count element
+            var likeCountElement = document.getElementById(likeCountElementId);
+            var dislikeCountElement = document.getElementById(dislikeCountElementId);
+
+            // Make the AJAX request to the Like action
+            fetch(`/Home/LikeReply?blogId=${blogId}&replyId=${replyId}&commentId=${commentId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Check if the like count element exists
+                    if (likeCountElement && dislikeCountElement) {
+                        // Update the like count on the page
+                        console.log('like Count exists')
+                        console.log(`likes=${data.likes}`)
+                        likeCountElement.textContent = `${data.likes}`;
+                        dislikeCountElement.textContent = `${data.dislikes}`;
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
+
+        function DislikeReply(blogId, replyId, commentId, dislikeCountElementId, likeCountElementId) {
+            // Get a reference to the like count element
+            var likeCountElement = document.getElementById(likeCountElementId);
+            var dislikeCountElement = document.getElementById(dislikeCountElementId);
+
+            // Make the AJAX request to the Like action
+            fetch(`/Home/DislikeReply?blogId=${blogId}&replyId=${replyId}&commentId=${commentId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Check if the like count element exists
+                    if (likeCountElement && dislikeCountElement) {
+                        // Update the like count on the page
+                        console.log('like Count exists')
+                        console.log(`likes=${data.likes}`)
+                        likeCountElement.textContent = `${data.likes}`;
+                        dislikeCountElement.textContent = `${data.dislikes}`;
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
+
       
 
     </script>

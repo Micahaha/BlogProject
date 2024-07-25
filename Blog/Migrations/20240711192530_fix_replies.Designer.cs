@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlogProject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240323014621_dbrecg")]
-    partial class dbrecg
+    [Migration("20240711192530_fix_replies")]
+    partial class fix_replies
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -131,6 +131,9 @@ namespace BlogProject.Migrations
                     b.Property<int>("TagId")
                         .HasColumnType("int");
 
+                    b.Property<string>("ThumbnailPathUrl")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -170,9 +173,6 @@ namespace BlogProject.Migrations
                     b.Property<int>("Likes")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ParentCommentId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Text")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -189,9 +189,42 @@ namespace BlogProject.Migrations
 
                     b.HasIndex("BlogId");
 
+                    b.ToTable("Comment");
+                });
+
+            modelBuilder.Entity("BlogProject.Models.Reply", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("CreatedDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Dislikes")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Likes")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ParentCommentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("User")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
                     b.HasIndex("ParentCommentId");
 
-                    b.ToTable("Comment");
+                    b.ToTable("Reply");
                 });
 
             modelBuilder.Entity("BlogProject.Models.Tag", b =>
@@ -382,7 +415,10 @@ namespace BlogProject.Migrations
                         .HasForeignKey("BlogId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
 
+            modelBuilder.Entity("BlogProject.Models.Reply", b =>
+                {
                     b.HasOne("BlogProject.Models.Comment", "ParentComment")
                         .WithMany("Replies")
                         .HasForeignKey("ParentCommentId")

@@ -2,17 +2,18 @@
 
 namespace BlogProject.Models
 {
-    public class Comment
+    public class Reply
     {
         [Key]
         public int Id { get; set; }
-        public string User { get; set; }
         public string Text { get; set;  }
-        public DateTime CreatedDateTime { get; set; } = DateTime.Now;
+        public string User { get; set; }
+        public int? ParentCommentId { get; set; }
+        public Comment? ParentComment { get; set; }
         public int Likes { get; set; }
         public int Dislikes { get; set; }
-           
-        public int BlogId { get; set; }
-        public List<Reply>? Replies { get; set; }
+        public DateTime CreatedDateTime { get; set; } = DateTime.Now;
+
+
     }
 }

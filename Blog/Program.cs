@@ -10,7 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("SQL_CONNECTIONSTRING");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlServer(connectionString, options => options.EnableRetryOnFailure()));
+
 
 builder.Services.AddIdentityCore<ApplicationUser>();
 builder.Services.AddDefaultIdentity<ApplicationUser>()
@@ -20,10 +21,15 @@ builder.Services.AddDefaultIdentity<ApplicationUser>()
         .AddEntityFrameworkStores<ApplicationDbContext>()
         .AddDefaultTokenProviders();
 
+builder.Services.Configure<IdentityOptions>(opts =>
+{
+    opts.SignIn.RequireConfirmedEmail = true;
+});
+
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<BlogService>();
+builder.Services.AddTransient<IEmailService, EmailService>();
 
-builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration);
 
 var configuration = builder.Configuration;
@@ -122,6 +128,7 @@ using (var scope = app.Services.CreateScope())
         await userManager.CreateAsync(user, password);
         await userManager.AddToRoleAsync(user, "Admin");
     }
+
 }
 
 

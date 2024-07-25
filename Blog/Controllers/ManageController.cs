@@ -51,6 +51,8 @@ namespace BlogProject.Controllers
                     Name = role.RoleName
                 };
 
+                
+
                 var result = await roleManager.CreateAsync(identityRole);
 
                 if (result.Succeeded) 

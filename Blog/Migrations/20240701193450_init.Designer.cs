@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlogProject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240323014542_dbrec")]
-    partial class dbrec
+    [Migration("20240701193450_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -130,6 +130,9 @@ namespace BlogProject.Migrations
 
                     b.Property<int>("TagId")
                         .HasColumnType("int");
+
+                    b.Property<string>("ThumbnailPathUrl")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
                         .IsRequired()

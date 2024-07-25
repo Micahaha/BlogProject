@@ -17,6 +17,8 @@ namespace BlogProject.Data
         public DbSet<Blog> Blogs {get; set;}
         public DbSet<Tag> Tags { get; set; }
         public DbSet<Comment>? Comment { get; set; }
+        
+        public DbSet<Reply> Reply { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -2,6 +2,7 @@
 using BlogProject.Models;
 using BlogProject.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -38,12 +39,7 @@ namespace BlogProject.Controllers
         {
             if (ModelState.IsValid) 
             {
-
-                var filter = new SwearFilter();
-
-                if (!filter.IsProfanity(text)){
-                    blogService.AddComment(blogId, text, User.Identity.Name);
-                }
+                blogService.AddComment(blogId, text, User.Identity.Name);
             }
             return RedirectToAction(nameof(Blog), new { id = blogId});
         }
@@ -54,11 +50,8 @@ namespace BlogProject.Controllers
         {
             if (ModelState.IsValid)
             {
-                var filter = new SwearFilter();
-                if (!filter.IsProfanity(text))
-                {
                     blogService.AddReply(commentId, text, User.Identity.Name);
-                }
+             
             }
 
             return RedirectToAction(nameof(Blog), new { id = blogService.getBlogFromComment(commentId).BlogId});
@@ -108,6 +101,51 @@ namespace BlogProject.Controllers
                 await context.SaveChangesAsync();
                 updated_dislikes = blogService.Check_dislikes(blogId, commentId);
                 updated_likes = blogService.Check_Likes(blogId, commentId);
+
+                // UPDATE LIKES
+            }
+            var result = new { Dislikes = updated_dislikes, Likes = updated_likes };
+
+            return Json(result);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> LikeReply(int blogId, int replyId, int commentId)
+        {
+            var updated_likes = 0;
+            var updated_dislikes = 0;
+
+            if (User.Identity.IsAuthenticated)
+            {
+
+                await blogService.AddLike(blogId, commentId, replyId);
+                await context.SaveChangesAsync();
+                updated_dislikes = blogService.Check_dislikes(blogId, commentId, replyId);
+                updated_likes = blogService.Check_Likes(blogId, commentId, replyId);
+
+                // UPDATE LIKES
+            }
+
+            var result = new { Dislikes = updated_dislikes, Likes = updated_likes };
+
+            return Json(result);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> DislikeReply(int blogId, int replyId, int commentId)
+        {
+            var updated_dislikes = 0;
+            var updated_likes = 0;
+
+            if (User.Identity.IsAuthenticated)
+            {
+
+                await blogService.AddDislike(blogId, commentId, replyId);
+                await context.SaveChangesAsync();
+                updated_dislikes = blogService.Check_dislikes(blogId, commentId, replyId);
+                updated_likes = blogService.Check_Likes(blogId, commentId, replyId);
 
                 // UPDATE LIKES
             }

@@ -171,6 +171,48 @@ namespace BlogProject.Migrations
                     b.Property<int>("Likes")
                         .HasColumnType("int");
 
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("User")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("ApplicationUserId1");
+
+                    b.HasIndex("BlogId");
+
+                    b.ToTable("Comment");
+                });
+
+            modelBuilder.Entity("BlogProject.Models.Reply", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ApplicationUserId1")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Dislikes")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Likes")
+                        .HasColumnType("int");
+
                     b.Property<int?>("ParentCommentId")
                         .HasColumnType("int");
 
@@ -188,11 +230,9 @@ namespace BlogProject.Migrations
 
                     b.HasIndex("ApplicationUserId1");
 
-                    b.HasIndex("BlogId");
-
                     b.HasIndex("ParentCommentId");
 
-                    b.ToTable("Comment");
+                    b.ToTable("Reply");
                 });
 
             modelBuilder.Entity("BlogProject.Models.Tag", b =>
@@ -383,6 +423,17 @@ namespace BlogProject.Migrations
                         .HasForeignKey("BlogId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("BlogProject.Models.Reply", b =>
+                {
+                    b.HasOne("BlogProject.Models.ApplicationUser", null)
+                        .WithMany("DislikedReplies")
+                        .HasForeignKey("ApplicationUserId");
+
+                    b.HasOne("BlogProject.Models.ApplicationUser", null)
+                        .WithMany("LikedReplies")
+                        .HasForeignKey("ApplicationUserId1");
 
                     b.HasOne("BlogProject.Models.Comment", "ParentComment")
                         .WithMany("Replies")
@@ -447,7 +498,11 @@ namespace BlogProject.Migrations
                 {
                     b.Navigation("DislikedComments");
 
+                    b.Navigation("DislikedReplies");
+
                     b.Navigation("LikedComments");
+
+                    b.Navigation("LikedReplies");
                 });
 
             modelBuilder.Entity("BlogProject.Models.Blog", b =>
