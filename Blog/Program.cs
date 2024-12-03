@@ -2,17 +2,31 @@ using BlogProject.Data;
 using BlogProject.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using MySqlConnector;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("SQL_CONNECTIONSTRING");
+
+
+
+var connectionString = builder.Configuration.GetConnectionString("MY_SQL_CONNECTIONSTRING");
+
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString, options => options.EnableRetryOnFailure()));
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
 
+
+ builder.Services.AddDbContext<ApplicationDbContext>(
+    options =>
+    {
+        options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+    });
+
+builder.Services.AddSerilog();
 builder.Services.AddIdentityCore<ApplicationUser>();
 builder.Services.AddDefaultIdentity<ApplicationUser>()
         .AddRoles<IdentityRole>()
@@ -37,8 +51,9 @@ var configuration = builder.Configuration;
 
 builder.Services.AddAuthentication().AddGoogle(googleOptions =>
 {
-    googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
-    googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
+    var googleCredentials = builder.Configuration.GetSection("GoogleCredentials").Get<GoogleCrendentials>();
+    googleOptions.ClientId = googleCredentials.ClientId;
+    googleOptions.ClientSecret = googleCredentials.ClientSecret;
 });
 
 builder.Services.AddSession(options =>
@@ -59,10 +74,14 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 
+builder.Logging.AddConsole();
+builder.Services.AddMySqlDataSource(connectionString);
+
 
 
 
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -95,6 +114,10 @@ app.MapControllerRoute(
 // create roles if web app is moved from place to place 
 using(var scope = app.Services.CreateScope())
 {
+
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    dbContext.Database.Migrate();
+
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
     var roles = new[] { "Admin", "Member", "Author" };
@@ -107,25 +130,20 @@ using(var scope = app.Services.CreateScope())
     }
 }
 
-// Create test users DONT PUSH TO PROD
+
+// Give ADMIN role to my email account when I make it
 using (var scope = app.Services.CreateScope())
 {
     var userManager =
         scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
-    string email = "admin@admin.com";
-    string password = "Firelegend101$";
-
-    if (await userManager.FindByEmailAsync(email) == null)
+    if (await userManager.FindByEmailAsync("xicer029@gmail.com") != null)
     {
-        var user = new ApplicationUser
-        {
-            UserName = email,
-            Email = email
-        };
+
+        var user = await userManager.FindByEmailAsync("xicer029@gmail.com");
+
         // user.EmailConfirmed = true;
 
-        await userManager.CreateAsync(user, password);
         await userManager.AddToRoleAsync(user, "Admin");
     }
 

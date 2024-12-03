@@ -1,17 +1,20 @@
 {
   "dependencies": {
+    "mssql3": {
+      "ignored": "true",
+      "type": "mssql",
+      "connectionId": "ConnectionStrings:MY_SQL_CONNECTIONSTRING"
+    },
     "mssql1": {
+      "ignored": "true",
       "type": "mssql",
       "connectionId": "ConnectionStrings:DefaultConnection"
     },
     "mssql2": {
+      "ignored": "true",
       "type": "mssql",
       "connectionId": "ConnectionStrings:AZURE_SQL_CONNECTIONSTRING",
       "dynamicId": null
-    },
-    "secrets1": {
-      "type": "secrets",
-      "connectionId": null
     }
   }
 }
