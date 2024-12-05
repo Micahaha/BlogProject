@@ -14,6 +14,12 @@ services:
       MYSQL_ROOT_PASSWORD: Firelegend101
       MYSQL_DATABASE: blog
 
+  healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pFirelegend101"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
   mvc:
     build:
       context: .
