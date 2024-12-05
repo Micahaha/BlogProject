@@ -13,7 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 var connectionString = builder.Configuration.GetConnectionString("MY_SQL_CONNECTIONSTRING");
-
+Console.WriteLine(connectionString);
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
