@@ -94,7 +94,7 @@ else
     app.UseHsts();
 }
 app.UseStaticFiles();
-app.UseHttpsRedirection()
+app.UseHttpsRedirection();
 
 app.UseRouting();
 
