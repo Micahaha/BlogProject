@@ -1,64 +1,45 @@
-version: "3.8"
-
-volumes:
-  datafiles:
-  nginx_data:
-  certs:
+version: '3.7'
 
 services:
-  db:
-    image: mysql:8.0
-    container_name: mysql_db
-    volumes:
-      - datafiles:/var/lib/mysql
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: Firelegend101
-      MYSQL_DATABASE: blog
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pFirelegend101"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 20s
-
-  mvc:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    depends_on:
-      db:
-        condition: service_healthy
-    expose:
-      - "80"   # Exposing port 80 inside the container to NGINX
-    restart: always
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:80
-
   nginx:
     image: nginx:latest
     container_name: nginx
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf  # Reference custom NGINX config
-      - ./certs:/etc/letsencrypt            # SSL certificates mounted here
-      - ./nginx_data:/var/www/certbot      # Directory for Certbot challenges
     ports:
-      - "80:80"   # HTTP for Certbot challenge
-      - "443:443" # HTTPS for serving your application
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - certbot_conf:/etc/letsencrypt
+      - certbot_www:/var/www/certbot
     depends_on:
-      - mvc       # Wait for MVC service
-    restart: always
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
+      certbot:
+        condition: service_completed_successfully
+    entrypoint: /bin/sh -c "while [ ! -f /etc/letsencrypt/live/micahshouse.me/fullchain.pem ]; do sleep 1; done && nginx -g 'daemon off;'"
 
   certbot:
     image: certbot/certbot
     container_name: certbot
     volumes:
-      - ./nginx_data:/var/www/certbot  # Shared volume with NGINX for challenge files
-      - ./certs:/etc/letsencrypt       # Shared volume for certificates
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+      - certbot_conf:/etc/letsencrypt
+      - certbot_www:/var/www/certbot
+    entrypoint: >
+      sh -c "mkdir -p /var/www/certbot &&
+             certbot certonly --webroot -w /var/www/certbot
+             --email xicer029@gmail.com --agree-tos --no-eff-email
+             -d micahshouse.me -d www.micahshouse.me -d blog.micahshouse.me &&
+             touch /etc/letsencrypt/.certs_created"
+
+  mvc:
+    image: blog-mvc-1
+    container_name: mvc
+    expose:
+      - "5000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  certbot_conf:
+  certbot_www:
