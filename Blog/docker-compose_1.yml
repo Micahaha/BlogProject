@@ -1,0 +1,35 @@
+version: "3.4"
+
+volumes:
+  datafiles:
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    volumes:
+      - datafiles:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Firelegend101
+      MYSQL_DATABASE: blog
+
+  mvc:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    ports:
+      - "5000:80"
+      - "443:443"
+    restart: always
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      
+      
+    volumes:
+      - ~/.aspnet/https:/https:ro
+
+

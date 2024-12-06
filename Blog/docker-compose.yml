@@ -1,35 +1,45 @@
-version: "3.4"
-
-volumes:
-  datafiles:
+version: '3.7'
 
 services:
-  db:
-    image: mysql:8.0
-    container_name: mysql_db
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
     volumes:
-      - datafiles:/var/lib/mysql
-    restart: always
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - certbot_conf:/etc/letsencrypt
+      - certbot_www:/var/www/certbot
+    depends_on:
+      - certbot
+    entrypoint: /bin/sh -c "while [ ! -f /etc/letsencrypt/live/micahshouse.me/fullchain.pem ]; do sleep 1; done && nginx -g 'daemon off;'"
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - certbot_conf:/etc/letsencrypt
+      - certbot_www:/var/www/certbot
+    command: >
+      certonly --webroot -w /var/www/certbot
+      --email xicer029@gmail.com --agree-tos --no-eff-email
+      -d micahshouse.me -d www.micahshouse.me -d blog.micahshouse.me
+    entrypoint: /bin/sh -c "mkdir -p /var/www/certbot && exec \"$@\""
     environment:
-      MYSQL_ROOT_PASSWORD: Firelegend101
-      MYSQL_DATABASE: blog
+      - CERTBOT_RENEW=true  # Enable renewals if required in the future
 
   mvc:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    depends_on:
-      - db
-    ports:
-      - "5000:80"
-      - "443:443"
-    restart: always
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:80
-      
-      
-    volumes:
-      - ~/.aspnet/https:/https:ro
+    image: blog-mvc-1
+    container_name: mvc
+    expose:
+      - "5000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
-
+volumes:
+  certbot_conf:
+  certbot_www:

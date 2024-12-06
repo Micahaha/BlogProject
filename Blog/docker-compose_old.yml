@@ -12,8 +12,7 @@ services:
       - certbot_conf:/etc/letsencrypt
       - certbot_www:/var/www/certbot
     depends_on:
-      certbot:
-        condition: service_completed_successfully
+      - certbot
     entrypoint: /bin/sh -c "while [ ! -f /etc/letsencrypt/live/micahshouse.me/fullchain.pem ]; do sleep 1; done && nginx -g 'daemon off;'"
 
   certbot:
@@ -22,12 +21,13 @@ services:
     volumes:
       - certbot_conf:/etc/letsencrypt
       - certbot_www:/var/www/certbot
-    entrypoint: >
-      sh -c "mkdir -p /var/www/certbot &&
-             certbot certonly --webroot -w /var/www/certbot
-             --email xicer029@gmail.com --agree-tos --no-eff-email
-             -d micahshouse.me -d www.micahshouse.me -d blog.micahshouse.me &&
-             touch /etc/letsencrypt/.certs_created"
+    command: >
+      certonly --webroot -w /var/www/certbot
+      --email xicer029@gmail.com --agree-tos --no-eff-email
+      -d micahshouse.me -d www.micahshouse.me -d blog.micahshouse.me
+    entrypoint: /bin/sh -c "mkdir -p /var/www/certbot && exec \"$@\""
+    environment:
+      - CERTBOT_RENEW=true  # Enable renewals if required in the future
 
   mvc:
     image: blog-mvc-1
