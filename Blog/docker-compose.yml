@@ -1,33 +1,74 @@
 
 services:
-  nginx:
-    image: nginx:latest
+  mvc:
+    build: ./web
+    expose:
+      - "8080"
+    restart: always
+    depends_on:
+      - mysql
+    networks:
+      - application
+    environment:
+
+      # in production we should redirect to SSL but in dev set this to noredirect
+      HTTPS_METHOD: "${HTTPS_METHOD}"
+
+      # in development these should be localhost but in production these should be the domain you are using
+      VIRTUAL_HOST: "${VIRTUAL_HOST}"
+      LETSENCRYPT_HOST: "${LETSENCRYPT_HOST}"
+      LETSENCRYPT_EMAIL: "${LETSENCRYPT_EMAIL}"
+
+
+  mysql:
+    image: mysql:8.0
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password
+    networks:
+      - application
+    environment:
+      MYSQL_DATABASE: "${MYSQL_DATABASE}"
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  nginx-proxy:
+    image: jwilder/nginx-proxy:alpine
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx/conf/:/etc/nginx/conf.d/:ro
-      - ./certbot/www/:/var/www/certbot/:ro
-    depends_on:
-      - certbot
-  certbot:
-    image: certbot/certbot
+      - static:/app/app/static/
+      - vhost:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - certs:/etc/nginx/certs
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    networks:
+      - application
+    labels:
+      - "com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy"
+
+  letsencrypt:
+    restart: always
+    container_name: letsencrypt
+    image: jrcs/letsencrypt-nginx-proxy-companion
     volumes:
-        - ./certbot/www/:/var/www/certbot/:rw
-        - ./certbot/conf/:/etc/letsencrypt/:rw
-
-
-  mvc:
-    image: blog-mvc
-    container_name: mvc
-    expose:
-      - "5000"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      - vhost:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - certs:/etc/nginx/certs
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - applic:ation
+    depends_on:
+      - nginx-proxy
+    profiles: ["production"] # only run the lets encrypt service in production
 
 volumes:
-  certbot_conf:
-  certbot_www:
+  db_data:
+  html:
+  certs:
+  vhost:
+  static:
+
+networks:
+  application:
