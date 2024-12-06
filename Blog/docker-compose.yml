@@ -15,22 +15,20 @@ services:
       - certbot
     entrypoint: /bin/sh -c "while [ ! -f /etc/letsencrypt/live/micahshouse.me/fullchain.pem ]; do sleep 1; done && nginx -g 'daemon off;'"
 
-  certbot:
-    image: certbot/certbot
-    container_name: certbot
-    volumes:
-      - certbot_conf:/etc/letsencrypt
-      - certbot_www:/var/www/certbot
-    command: >
-      certonly --webroot -w /var/www/certbot
-      --email xicer029@gmail.com --agree-tos --no-eff-email
-      -d micahshouse.me -d www.micahshouse.me -d blog.micahshouse.me
-    entrypoint: /bin/sh -c "mkdir -p /var/www/certbot && exec \"$@\""
-    environment:
-      - CERTBOT_RENEW=true  # Enable renewals if required in the future
+certbot:
+  image: certbot/certbot
+  container_name: certbot
+  volumes:
+    - certbot_conf:/etc/letsencrypt
+    - certbot_www:/var/www/certbot
+  command: >
+    certonly --webroot -w /var/www/certbot
+    --email xicer029@gmail.com --agree-tos --no-eff-email
+    -d micahshouse.me -d www.micahshouse.me -d blog.micahshouse.me
+
 
   mvc:
-    image: blog-mvc-1
+    image: blog-mvc
     container_name: mvc
     expose:
       - "5000"
