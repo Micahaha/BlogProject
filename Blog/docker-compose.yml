@@ -1,7 +1,6 @@
-
 services:
   mvc:
-    build: ./web
+    build: .
     expose:
       - "8080"
     restart: always
@@ -23,12 +22,11 @@ services:
   mysql:
     image: mysql:8.0
     restart: always
-    command: --default-authentication-plugin=mysql_native_password
     networks:
       - application
     environment:
-      MYSQL_DATABASE: "${MYSQL_DATABASE}"
-      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+      MYSQL_DATABASE: blog
+      MYSQL_ROOT_PASSWORD: Firelegend101
     volumes:
       - db_data:/var/lib/mysql
 
@@ -58,7 +56,7 @@ services:
       - certs:/etc/nginx/certs
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
-      - applic:ation
+      - application
     depends_on:
       - nginx-proxy
     profiles: ["production"] # only run the lets encrypt service in production

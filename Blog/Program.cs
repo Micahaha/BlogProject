@@ -96,7 +96,7 @@ else
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseSession();
