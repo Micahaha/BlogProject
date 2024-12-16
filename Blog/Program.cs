@@ -8,11 +8,6 @@ using MySqlConnector;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-
-
-
 var connectionString = builder.Configuration.GetConnectionString("MY_SQL_CONNECTIONSTRING");
 Console.WriteLine(connectionString);
 
@@ -83,6 +78,10 @@ builder.Services.AddMySqlDataSource(connectionString);
 
 var app = builder.Build();
 
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -94,7 +93,7 @@ else
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
-app.UseHttpsRedirection();
+
 
 app.UseStaticFiles();
 
@@ -149,16 +148,6 @@ using (var scope = app.Services.CreateScope())
     }
 
 }
-
-var forwardedHeadersOptions = new ForwardedHeadersOptions
-{
-    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
-    RequireHeaderSymmetry = false
-};
-forwardedHeadersOptions.KnownNetworks.Clear();
-forwardedHeadersOptions.KnownProxies.Clear();
-
-app.UseForwardedHeaders(forwardedHeadersOptions);
 
 
 

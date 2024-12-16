@@ -1,6 +1,7 @@
+
 services:
   mvc:
-    build: .
+    build: ./
     expose:
       - "8080"
     restart: always
@@ -9,7 +10,8 @@ services:
     networks:
       - application
     environment:
-
+            
+      ASPNETCORE_ENVIRONMENT: Development
       # in production we should redirect to SSL but in dev set this to noredirect
       HTTPS_METHOD: "${HTTPS_METHOD}"
 
@@ -22,11 +24,12 @@ services:
   mysql:
     image: mysql:8.0
     restart: always
+    command: --default-authentication-plugin=mysql_native_password
     networks:
       - application
     environment:
-      MYSQL_DATABASE: blog
-      MYSQL_ROOT_PASSWORD: Firelegend101
+      MYSQL_DATABASE: "${MYSQL_DATABASE}"
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
     volumes:
       - db_data:/var/lib/mysql
 
@@ -41,8 +44,6 @@ services:
       - html:/usr/share/nginx/html
       - certs:/etc/nginx/certs
       - /var/run/docker.sock:/tmp/docker.sock:ro
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-
     networks:
       - application
     labels:

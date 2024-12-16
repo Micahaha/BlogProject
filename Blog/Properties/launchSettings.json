@@ -14,7 +14,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "development"
       },
-      "applicationUrl": "https://localhost:7024;http://localhost:5024",
+      "applicationUrl": "http://localhost:5024",
       "dotnetRunMessages": true
     },
 
@@ -24,7 +24,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "production"
       },
-      "applicationUrl": "https://localhost:7024;http://localhost:5024",
+      "applicationUrl": "http://localhost:5024",
       "dotnetRunMessages": true
     },
 
