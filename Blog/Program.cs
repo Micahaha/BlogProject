@@ -1,14 +1,16 @@
 using BlogProject.Data;
 using BlogProject.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using MySqlConnector;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
-var connectionString = builder.Configuration.GetConnectionString("MY_SQL_CONNECTIONSTRING");
+var connectionString = builder.Configuration.GetConnectionString("LOCAL_CONNECTION");
 Console.WriteLine(connectionString);
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -44,13 +46,6 @@ builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration);
 
 var configuration = builder.Configuration;
 
-
-builder.Services.AddAuthentication().AddGoogle(googleOptions =>
-{
-    var googleCredentials = builder.Configuration.GetSection("GoogleCredentials").Get<GoogleCrendentials>();
-    googleOptions.ClientId = googleCredentials.ClientId;
-    googleOptions.ClientSecret = googleCredentials.ClientSecret;
-});
 
 builder.Services.AddSession(options =>
 {
