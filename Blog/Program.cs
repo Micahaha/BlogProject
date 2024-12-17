@@ -10,7 +10,7 @@ using MySqlConnector;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
-var connectionString = builder.Configuration.GetConnectionString("LOCAL_CONNECTION");
+var connectionString = builder.Configuration.GetConnectionString("MY_SQL_CONNECTIONSTRING");
 Console.WriteLine(connectionString);
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
